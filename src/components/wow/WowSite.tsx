@@ -221,7 +221,7 @@ function Products() {
   const n = PRODUCTS.length;
   const touch = useRef<number | null>(null);
   const go = (d: number) => setI((v) => (v + d + n) % n);
-  const p = PRODUCTS[i];
+  const p = PRODUCTS[i]!;
   return (
     <section id="products" className="relative overflow-hidden bg-charcoal py-28 text-paper">
       <h2 aria-label="Our products" className="display pointer-events-none select-none text-center text-[17vw] text-charcoal-soft">
@@ -351,9 +351,9 @@ function Reviews() {
         </div>
         <div>
           <Sparkle className="mb-6 h-8 w-8" />
-          <blockquote key={i} className="text-xl leading-relaxed animate-in fade-in slide-in-from-right-4 duration-500 md:text-2xl">“{R[i].q}”</blockquote>
+          <blockquote key={i} className="text-xl leading-relaxed animate-in fade-in slide-in-from-right-4 duration-500 md:text-2xl">“{R[i]!.q}”</blockquote>
           <div className="mt-6 flex items-center justify-between">
-            <p className="text-sm text-muted-foreground">{R[i].a}</p>
+            <p className="text-sm text-muted-foreground">{R[i]!.a}</p>
             <button aria-label="Next review" onClick={() => setI((i + 1) % R.length)} className="pill grid h-11 w-11 place-items-center bg-paper transition hover:rotate-[-20deg]">
               <ArrowRight className="h-4 w-4" />
             </button>
