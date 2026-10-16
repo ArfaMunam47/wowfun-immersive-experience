@@ -310,7 +310,7 @@ function How() {
     <section id="how" className="relative overflow-hidden bg-paper pt-28">
       <div className="mx-auto grid max-w-6xl gap-8 px-6 md:grid-cols-[1fr_1.1fr]">
         <div className="relative z-10">
-          <h2 className="reveal display whitespace-nowrap text-7xl md:text-[9rem]">how to <span className="md:text-paper md:mix-blend-difference">use</span></h2>
+          <h2 className="reveal display relative z-10 text-7xl md:whitespace-nowrap md:text-[8rem]">how to use</h2>
           <div className="mt-10 grid grid-cols-2 gap-x-6 gap-y-8">
             {steps.map(({ I, t, d }) => (
               <div key={t} className="step">
