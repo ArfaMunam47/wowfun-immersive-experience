@@ -377,7 +377,7 @@ function Reviews() {
 }
 
 /* ---------- FAQ ---------- */
-export const FAQS = [
+export const FAQS: [string, string][] = [
   ["What's inside a WOW FUN can?", "Sparkling water, real fruit juice, natural botanicals like lavender and mint, and a touch of stevia. No artificial colours, no added sugar."],
   ["How many flavours are there?", "Three core flavours — Blueberry Dream, Mint Lime and Lemon Zest — plus seasonal drops announced on our newsletter."],
   ["Do you ship internationally?", "Yes! Shipping is free worldwide on orders of 12 cans or more. Most orders arrive within 3–7 business days."],

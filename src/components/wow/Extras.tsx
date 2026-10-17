@@ -140,7 +140,7 @@ export function FlavorLab() {
         .from(".fl-can", { scale: 0.75, rotate: -18, opacity: 0, duration: 1.2, ease: "power3.out" }, "-=0.7")
         .from(".fl-ctrl", { y: 24, opacity: 0, duration: 0.6, stagger: 0.08, ease: "power3.out" }, "-=0.8");
       gsap.utils.toArray<HTMLElement>(".fl-par").forEach((el) => {
-        const speed = Number(el.dataset.speed || 1);
+        const speed = Number(el.dataset["speed"] || 1);
         gsap.to(el, { yPercent: -40 * speed, ease: "none", scrollTrigger: { trigger: ref.current, start: "top bottom", end: "bottom top", scrub: true } });
       });
     }, ref);
