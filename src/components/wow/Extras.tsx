@@ -186,7 +186,7 @@ export function FlavorLab() {
           <div className="fl-can relative order-1 mx-auto md:order-2">
             <div className="absolute inset-x-0 bottom-4 mx-auto h-10 w-40 rounded-full bg-ink/20 blur-xl" />
             <img key={p.name} src={p.img} alt={p.name} loading="lazy" width={576} height={1152} className="relative h-[52vh] w-auto drop-shadow-[var(--shadow-can)]" />
-            <Star className="fl-par absolute -right-10 top-6 h-14 w-14" data-speed="1.8" />
+            <span className="fl-par absolute -right-10 top-6" data-speed="1.8"><Star className="h-14 w-14" /></span>
           </div>
 
           <div className="order-3">

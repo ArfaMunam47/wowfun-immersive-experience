@@ -1,7 +1,8 @@
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { ArrowLeft, ArrowRight, Menu, Plus, Search, X, Leaf, Droplets, Sparkles, Snowflake, Truck, Palette } from "lucide-react";
+import { SearchOverlay, FlavorLab, WowClub } from "./Extras";
 import canMint from "@/assets/can-mint.png";
 import canBerry from "@/assets/can-berry.png";
 import canLemon from "@/assets/can-lemon.png";
@@ -11,7 +12,7 @@ import skaters from "@/assets/skaters.jpg";
 import friends from "@/assets/friends.jpg";
 import graffiti from "@/assets/graffiti.jpg";
 
-const NAV = [
+export const NAV = [
   { id: "why", label: "why to use" },
   { id: "products", label: "products" },
   { id: "how", label: "how to use" },
@@ -21,17 +22,17 @@ const NAV = [
 ];
 
 /* ---------- decorative svgs ---------- */
-const Star = ({ className = "" }: { className?: string }) => (
+export const Star = ({ className = "" }: { className?: string }) => (
   <svg viewBox="0 0 100 100" className={className}>
     <path d="M50 5 L61 38 L95 38 L67 58 L78 92 L50 71 L22 92 L33 58 L5 38 L39 38 Z" fill="var(--sun)" stroke="var(--ink)" strokeWidth="3" strokeLinejoin="round" />
   </svg>
 );
-const Sparkle = ({ className = "" }: { className?: string }) => (
+export const Sparkle = ({ className = "" }: { className?: string }) => (
   <svg viewBox="0 0 100 100" className={className}>
     <path d="M50 0 C54 40 60 46 100 50 C60 54 54 60 50 100 C46 60 40 54 0 50 C40 46 46 40 50 0Z" fill="none" stroke="var(--ink)" strokeWidth="3" />
   </svg>
 );
-const Flower = ({ className = "" }: { className?: string }) => (
+export const Flower = ({ className = "" }: { className?: string }) => (
   <svg viewBox="0 0 100 100" className={className}>
     {[0, 45, 90, 135, 180, 225, 270, 315].map((r) => (
       <ellipse key={r} cx="50" cy="24" rx="11" ry="22" fill="var(--coral)" stroke="var(--ink)" strokeWidth="2.5" transform={`rotate(${r} 50 50)`} />
@@ -39,7 +40,7 @@ const Flower = ({ className = "" }: { className?: string }) => (
     <circle cx="50" cy="50" r="13" fill="var(--sun)" stroke="var(--ink)" strokeWidth="2.5" />
   </svg>
 );
-const Eyes = ({ className = "" }: { className?: string }) => (
+export const Eyes = ({ className = "" }: { className?: string }) => (
   <svg viewBox="0 0 120 70" className={className}>
     {[32, 88].map((x) => (
       <g key={x}>
@@ -49,7 +50,7 @@ const Eyes = ({ className = "" }: { className?: string }) => (
     ))}
   </svg>
 );
-const Burst = ({ className = "" }: { className?: string }) => (
+export const Burst = ({ className = "" }: { className?: string }) => (
   <svg viewBox="0 0 100 100" className={className}>
     <path d="M50 2 L58 30 L84 16 L70 42 L98 50 L70 58 L84 84 L58 70 L50 98 L42 70 L16 84 L30 58 L2 50 L30 42 L16 16 L42 30Z" fill="var(--pink-deep)" stroke="var(--ink)" strokeWidth="2.5" strokeLinejoin="round" />
   </svg>
@@ -58,6 +59,8 @@ const Burst = ({ className = "" }: { className?: string }) => (
 /* ---------- Nav ---------- */
 function Nav({ active }: { active: string }) {
   const [open, setOpen] = useState(false);
+  const [search, setSearch] = useState(false);
+  const closeSearch = useCallback(() => setSearch(false), []);
   return (
     <header className="fixed inset-x-0 top-3 z-50 px-3 md:px-6">
       <nav className="pill mx-auto flex max-w-6xl items-center justify-between bg-paper/90 px-3 py-1.5 backdrop-blur">
@@ -80,7 +83,7 @@ function Nav({ active }: { active: string }) {
           ))}
         </ul>
         <div className="flex items-center gap-2">
-          <button aria-label="Search" className="pill grid h-7 w-7 place-items-center transition-transform hover:rotate-12">
+          <button aria-label="Search" aria-haspopup="dialog" aria-expanded={search} onClick={() => setSearch(true)} className="pill grid h-7 w-7 place-items-center transition-transform hover:rotate-12">
             <Search className="h-3.5 w-3.5" />
           </button>
           <button aria-label="Menu" onClick={() => setOpen(true)} className="pill grid h-7 w-7 place-items-center md:hidden">
@@ -107,6 +110,7 @@ function Nav({ active }: { active: string }) {
         </ul>
         <Flower className="spin-slow mt-auto h-24 w-24 self-end" />
       </div>
+      <SearchOverlay open={search} onClose={closeSearch} />
     </header>
   );
 }
@@ -211,7 +215,7 @@ function Why() {
 }
 
 /* ---------- Products ---------- */
-const PRODUCTS = [
+export const PRODUCTS = [
   { name: "Blueberry Dream", img: canBerry, size: "330 ml", cal: "12 kcal", desc: "Juicy blueberry, a whisper of lavender and soft bubbles that slow the world down.", glow: "var(--pink-deep)" },
   { name: "Mint Lime", img: canMint, size: "330 ml", cal: "9 kcal", desc: "Garden mint and squeezed lime. Cool, bright and dangerously refreshing.", glow: "var(--mint-deep)" },
   { name: "Lemon Zest", img: canLemon, size: "330 ml", cal: "11 kcal", desc: "Sun-ripened lemon with a ginger kick. Like summer in a can.", glow: "var(--sun)" },
@@ -221,6 +225,11 @@ function Products() {
   const n = PRODUCTS.length;
   const touch = useRef<number | null>(null);
   const go = (d: number) => setI((v) => (v + d + n) % n);
+  useEffect(() => {
+    const h = (e: Event) => setI((e as CustomEvent<number>).detail);
+    window.addEventListener("wow:product", h);
+    return () => window.removeEventListener("wow:product", h);
+  }, []);
   const p = PRODUCTS[i]!;
   return (
     <section id="products" className="relative overflow-hidden bg-charcoal py-28 text-paper">
@@ -368,7 +377,7 @@ function Reviews() {
 }
 
 /* ---------- FAQ ---------- */
-const FAQS = [
+export const FAQS = [
   ["What's inside a WOW FUN can?", "Sparkling water, real fruit juice, natural botanicals like lavender and mint, and a touch of stevia. No artificial colours, no added sugar."],
   ["How many flavours are there?", "Three core flavours — Blueberry Dream, Mint Lime and Lemon Zest — plus seasonal drops announced on our newsletter."],
   ["Do you ship internationally?", "Yes! Shipping is free worldwide on orders of 12 cans or more. Most orders arrive within 3–7 business days."],
@@ -377,6 +386,11 @@ const FAQS = [
 ];
 function Faq() {
   const [open, setOpen] = useState<number | null>(0);
+  useEffect(() => {
+    const h = (e: Event) => setOpen(FAQS.findIndex(([q]) => q === (e as CustomEvent<string>).detail));
+    window.addEventListener("wow:faq", h);
+    return () => window.removeEventListener("wow:faq", h);
+  }, []);
   return (
     <section id="faq" className="relative overflow-hidden bg-mint py-28">
       <Flower className="spin-slow absolute left-[12%] top-10 h-14 w-14" />
@@ -414,7 +428,7 @@ function Faq() {
 }
 
 /* ---------- Articles ---------- */
-const ARTICLES = [
+export const ARTICLES = [
   { cat: "Wellness", date: "June 21, 2026", read: "4 min", title: "Everything You Need to Know Before Choosing a Botanical Soda", img: cliff,
     body: ["Botanical sodas are everywhere, but not all fizz is created equal. Look for real fruit, short ingredient lists and no added sugar.", "At WOW FUN, every flavour starts with a botanical base — lavender, mint or ginger — chosen for taste first and calm second.", "Our tip: read the label like a recipe. If you can't picture the ingredient, you probably don't need it."] },
   { cat: "Recipes", date: "June 17, 2026", read: "3 min", title: "Combining WOW FUN with Superfoods", img: friends,
@@ -428,6 +442,11 @@ function Articles() {
   const cats = ["All", "Wellness", "Recipes", "Lifestyle"];
   const [cat, setCat] = useState("All");
   const [openA, setOpenA] = useState<(typeof ARTICLES)[number] | null>(null);
+  useEffect(() => {
+    const h = (e: Event) => { setCat("All"); setOpenA(ARTICLES.find((a) => a.title === (e as CustomEvent<string>).detail) ?? null); };
+    window.addEventListener("wow:article", h);
+    return () => window.removeEventListener("wow:article", h);
+  }, []);
   const list = ARTICLES.filter((a) => cat === "All" || a.cat === cat);
   useEffect(() => {
     document.body.style.overflow = openA ? "hidden" : "";
@@ -530,6 +549,8 @@ export function WowSite() {
       <Reviews />
       <Faq />
       <Articles />
+      <FlavorLab />
+      <WowClub />
       <Footer />
     </main>
   );
