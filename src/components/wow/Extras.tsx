@@ -120,23 +120,29 @@ export function SearchOverlay({ open, onClose }: { open: boolean; onClose: () =>
 
 /* ================= FLAVOR LAB ================= */
 const LAB = [
-  { notes: ["blueberry", "lavender", "vanilla bean"], fruit: "var(--pink-deep)", bg: "var(--pink)", shapes: ["●", "✿", "●"] },
-  { notes: ["garden mint", "lime", "cucumber"], fruit: "var(--mint-deep)", bg: "var(--mint)", shapes: ["◐", "❦", "◐"] },
-  { notes: ["lemon", "ginger", "honeysuckle"], fruit: "var(--sun)", bg: "var(--paper)", shapes: ["◑", "✺", "◑"] },
+  { notes: ["blueberry", "lavender", "vanilla bean"], fruit: "oklch(0.72 0.11 270)", soft: "oklch(0.86 0.06 300)", shapes: ["●", "✿", "◍"] },
+  { notes: ["garden mint", "lime", "cucumber"], fruit: "var(--mint-deep)", soft: "oklch(0.9 0.09 135)", shapes: ["◐", "❦", "◐"] },
+  { notes: ["lemon", "ginger", "honeysuckle"], fruit: "var(--sun)", soft: "oklch(0.9 0.07 80)", shapes: ["◑", "✺", "◑"] },
 ];
 
 export function FlavorLab() {
   const ref = useRef<HTMLElement>(null);
-  const [i, setI] = useState(0);
+  const [sel, setSel] = useState(0); // immediate selection (buttons)
+  const [i, setI] = useState(0); // displayed content, single source for can/text/notes
+  const [busy, setBusy] = useState(false);
+  const tl = useRef<gsap.core.Timeline | null>(null);
+  const dir = useRef(1);
+  const first = useRef(true);
   const p = PRODUCTS[i]!;
   const lab = LAB[i]!;
+  const accent = LAB[sel]!;
 
   useEffect(() => {
     if (reduced()) return;
     gsap.registerPlugin(ScrollTrigger);
     const ctx = gsap.context(() => {
-      const tl = gsap.timeline({ scrollTrigger: { trigger: ref.current, start: "top 65%" } });
-      tl.from(".fl-word", { yPercent: 110, rotate: 4, duration: 1, stagger: 0.08, ease: "power4.out" })
+      const t = gsap.timeline({ scrollTrigger: { trigger: ref.current, start: "top 65%" } });
+      t.from(".fl-word", { yPercent: 110, rotate: 4, duration: 1, stagger: 0.08, ease: "power4.out" })
         .from(".fl-can", { scale: 0.75, rotate: -18, opacity: 0, duration: 1.2, ease: "power3.out" }, "-=0.7")
         .from(".fl-ctrl", { y: 24, opacity: 0, duration: 0.6, stagger: 0.08, ease: "power3.out" }, "-=0.8");
       gsap.utils.toArray<HTMLElement>(".fl-par").forEach((el) => {
@@ -144,22 +150,46 @@ export function FlavorLab() {
         gsap.to(el, { yPercent: -40 * speed, ease: "none", scrollTrigger: { trigger: ref.current, start: "top bottom", end: "bottom top", scrub: true } });
       });
     }, ref);
-    return () => ctx.revert();
+    return () => { ctx.revert(); tl.current?.kill(); };
   }, []);
 
+  const choose = (k: number) => {
+    if (k === sel) return;
+    dir.current = k > sel ? 1 : -1;
+    setSel(k);
+    if (reduced() || !ref.current) { setI(k); return; }
+    tl.current?.kill();
+    setBusy(true);
+    const q = gsap.utils.selector(ref);
+    const d = dir.current;
+    tl.current = gsap.timeline({ onComplete: () => setI(k) })
+      .to(q(".fl-img"), { x: -18 * d, scale: 0.9, rotate: -3 * d, opacity: 0, duration: 0.28, ease: "power2.in" }, 0)
+      .to(q(".fl-shadow"), { opacity: 0, scaleX: 0.6, duration: 0.28 }, 0)
+      .to(q(".fl-title"), { y: -18, opacity: 0, duration: 0.24, ease: "power2.in" }, 0)
+      .to(q(".fl-txt"), { y: -8, opacity: 0, duration: 0.22, stagger: 0.03, ease: "power2.in" }, 0.02)
+      .to(q(".fl-note"), { y: -6, opacity: 0, duration: 0.2, stagger: 0.03 }, 0);
+  };
+
   useEffect(() => {
-    if (reduced() || !ref.current) return;
-    const ctx = gsap.context(() => {
-      gsap.fromTo(".fl-swap", { y: 20, opacity: 0 }, { y: 0, opacity: 1, duration: 0.6, stagger: 0.05, ease: "power3.out" });
-      gsap.fromTo(".fl-can img", { rotate: -10, scale: 0.92 }, { rotate: 0, scale: 1, duration: 0.9, ease: "power3.out" });
-    }, ref);
-    return () => ctx.revert();
+    if (first.current) { first.current = false; return; }
+    if (reduced() || !ref.current) { setBusy(false); return; }
+    const q = gsap.utils.selector(ref);
+    const d = dir.current;
+    tl.current?.kill();
+    tl.current = gsap.timeline({ onComplete: () => setBusy(false) })
+      .fromTo(q(".fl-img"), { x: 22 * d, scale: 0.88, rotate: 4 * d, opacity: 0 }, { x: 0, scale: 1, rotate: 0, opacity: 1, duration: 0.5, ease: "power3.out" }, 0)
+      .fromTo(q(".fl-shadow"), { opacity: 0, scaleX: 0.6 }, { opacity: 1, scaleX: 1, duration: 0.5, ease: "power2.out" }, 0.1)
+      .fromTo(q(".fl-title"), { y: 22, opacity: 0 }, { y: 0, opacity: 1, duration: 0.5, ease: "power3.out" }, 0.04)
+      .fromTo(q(".fl-txt"), { y: 10, opacity: 0 }, { y: 0, opacity: 1, duration: 0.45, stagger: 0.05, ease: "power3.out" }, 0.1)
+      .fromTo(q(".fl-note"), { y: 10, opacity: 0 }, { y: 0, opacity: 1, duration: 0.4, stagger: 0.07, ease: "power3.out" }, 0.12)
+      .fromTo(q(".fl-dot"), { scale: 0.6, opacity: 0 }, { scale: 1, opacity: 1, duration: 0.45, stagger: 0.07, ease: "back.out(2)" }, 0.12);
   }, [i]);
 
   return (
-    <section id="flavor-lab" ref={ref} className="relative overflow-hidden py-28 transition-colors duration-700" style={{ background: lab.bg }}>
-      <div className="fl-par pointer-events-none absolute -left-20 top-24 h-72 w-72 rounded-full opacity-60 transition-colors duration-700" data-speed="0.6" style={{ background: lab.fruit }} />
-      <div className="fl-par pointer-events-none absolute -right-10 bottom-10 h-48 w-48 rounded-full opacity-50 transition-colors duration-700" data-speed="1.4" style={{ background: lab.fruit }} />
+    <section id="flavor-lab" ref={ref} className="relative overflow-hidden bg-pink py-28">
+      <style>{`@keyframes flStar{0%,100%{transform:translateY(0) rotate(0)}50%{transform:translateY(-10px) rotate(18deg)}}@keyframes flFloat{0%,100%{transform:translateY(0)}50%{transform:translateY(-10px)}}@media (prefers-reduced-motion:reduce){.fl-anim{animation:none!important}}`}</style>
+      <div className="fl-par pointer-events-none absolute -left-20 top-24 h-72 w-72 rounded-full opacity-60 transition-colors duration-700" data-speed="0.6" style={{ background: accent.fruit }} />
+      <div className="fl-par pointer-events-none absolute -right-10 bottom-10 h-48 w-48 rounded-full opacity-50 transition-colors duration-700" data-speed="1.4" style={{ background: accent.soft }} />
       <Sparkle className="fl-par absolute right-[12%] top-16 h-12 w-12" />
       <div className="relative mx-auto max-w-6xl px-6">
         <div className="flex flex-wrap items-end justify-between gap-6">
@@ -171,12 +201,12 @@ export function FlavorLab() {
           <p className="max-w-xs pb-4 text-lg font-medium">Find your flavor. Discover your WOW.</p>
         </div>
 
-        <div className="mt-12 grid items-center gap-10 md:grid-cols-[1fr_auto_1fr]">
-          <div className="order-2 md:order-1">
-            <span className="pill bg-paper px-3 py-1 text-[10px] uppercase tracking-widest">Experiment No. 0{i + 1}</span>
-            <h3 className="fl-swap display mt-5 text-5xl md:text-6xl" style={{ lineHeight: 1 }}>{p.name}</h3>
-            <p className="fl-swap mt-4 max-w-sm text-muted-foreground">{p.desc}</p>
-            <div className="fl-swap mt-6 flex gap-6 text-sm">
+        <div className="mt-12 grid items-center gap-10 md:grid-cols-[1fr_auto_1fr]" aria-live="polite">
+          <div className="order-2 min-h-[16rem] md:order-1">
+            <span className="fl-txt pill inline-block bg-paper px-3 py-1 text-[10px] uppercase tracking-widest">Experiment No. 0{i + 1}</span>
+            <h3 className="fl-title display mt-5 text-5xl md:text-6xl" style={{ lineHeight: 1 }}>{p.name}</h3>
+            <p className="fl-txt mt-4 max-w-sm text-muted-foreground">{p.desc}</p>
+            <div className="fl-txt mt-6 flex gap-6 text-sm">
               <div><p className="text-[10px] uppercase tracking-widest text-muted-foreground">Size</p><p className="font-semibold">{p.size}</p></div>
               <div><p className="text-[10px] uppercase tracking-widest text-muted-foreground">Energy</p><p className="font-semibold">{p.cal}</p></div>
               <div><p className="text-[10px] uppercase tracking-widest text-muted-foreground">Sugar</p><p className="font-semibold">0 g</p></div>
@@ -184,18 +214,22 @@ export function FlavorLab() {
           </div>
 
           <div className="fl-can relative order-1 mx-auto md:order-2">
-            <div className="absolute inset-x-0 bottom-4 mx-auto h-10 w-40 rounded-full bg-ink/20 blur-xl" />
-            <img key={p.name} src={p.img} alt={p.name} loading="lazy" width={576} height={1152} className="relative h-[52vh] w-auto drop-shadow-[var(--shadow-can)]" />
-            <span className="fl-par absolute -right-10 top-6" data-speed="1.8"><Star className="h-14 w-14" /></span>
+            <div className="fl-shadow absolute inset-x-0 bottom-2 mx-auto h-10 w-40 rounded-full bg-ink/20 blur-xl" />
+            <div className="fl-anim" style={{ animation: "flFloat 5s ease-in-out infinite", animationPlayState: busy ? "paused" : "running" }}>
+              <img src={p.img} alt={p.name} width={576} height={1152} className="fl-img relative h-[52vh] w-auto object-contain drop-shadow-[var(--shadow-can)]" />
+            </div>
+            <span className="fl-par absolute -right-10 top-6" data-speed="1.8">
+              <span className="fl-anim block" style={{ animation: "flStar 7s ease-in-out infinite" }}><Star className="h-14 w-14" /></span>
+            </span>
           </div>
 
-          <div className="order-3">
+          <div className="order-3 min-h-[13rem]">
             <p className="text-[10px] uppercase tracking-widest text-muted-foreground">Flavor notes</p>
             <ul className="mt-4 space-y-3">
               {lab.notes.map((n, k) => (
-                <li key={n} className="fl-swap flex items-center gap-4">
-                  <span className="pill grid h-12 w-12 place-items-center text-xl transition-colors duration-700" style={{ background: lab.fruit }}>{lab.shapes[k]}</span>
-                  <span className="text-xl font-semibold">{n}</span>
+                <li key={i + n} className="fl-note group flex cursor-default items-center gap-4">
+                  <span className="fl-dot pill grid h-12 w-12 place-items-center text-xl transition-transform duration-300 group-hover:scale-110 group-hover:-rotate-6" style={{ background: k === 0 ? lab.fruit : lab.soft }}>{lab.shapes[k]}</span>
+                  <span className="text-xl font-semibold transition-transform duration-300 group-hover:translate-x-1">{n}</span>
                 </li>
               ))}
             </ul>
@@ -207,14 +241,14 @@ export function FlavorLab() {
             <button
               key={pr.name}
               role="tab"
-              aria-selected={k === i}
-              onClick={() => setI(k)}
-              className={`fl-ctrl pill group flex items-center gap-3 py-2 pl-2 pr-5 text-sm font-semibold transition-all duration-300 hover:-translate-y-1 ${k === i ? "bg-ink text-paper" : "bg-paper"}`}
+              aria-selected={k === sel}
+              onClick={() => choose(k)}
+              className={`fl-ctrl pill group flex cursor-pointer items-center gap-3 py-2 pl-2 pr-5 text-sm font-semibold transition-all duration-300 hover:-translate-y-1 active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ink focus-visible:ring-offset-2 ${k === sel ? "bg-ink text-paper" : "bg-paper"}`}
             >
-              <span className="grid h-9 w-9 place-items-center overflow-hidden rounded-full" style={{ background: LAB[k]!.fruit }}>
+              <span className="grid h-9 w-9 place-items-center overflow-hidden rounded-full ring-0 ring-ink transition-all duration-300 group-hover:scale-110 group-hover:ring-2" style={{ background: LAB[k]!.fruit }}>
                 <img src={pr.img} alt="" className="h-12 w-auto transition-transform duration-300 group-hover:rotate-12" />
               </span>
-              {pr.name}
+              <span className="transition-transform duration-300 group-hover:translate-x-0.5">{pr.name}</span>
             </button>
           ))}
         </div>
