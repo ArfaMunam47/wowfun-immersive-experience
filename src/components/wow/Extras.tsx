@@ -120,9 +120,9 @@ export function SearchOverlay({ open, onClose }: { open: boolean; onClose: () =>
 
 /* ================= FLAVOR LAB ================= */
 const LAB = [
-  { notes: ["blueberry", "lavender", "vanilla bean"], fruit: "oklch(0.72 0.11 270)", soft: "oklch(0.86 0.06 300)", shapes: ["●", "✿", "◍"] },
-  { notes: ["garden mint", "lime", "cucumber"], fruit: "var(--mint-deep)", soft: "oklch(0.9 0.09 135)", shapes: ["◐", "❦", "◐"] },
-  { notes: ["lemon", "ginger", "honeysuckle"], fruit: "var(--sun)", soft: "oklch(0.9 0.07 80)", shapes: ["◑", "✺", "◑"] },
+  { notes: ["blueberry", "lavender", "vanilla bean"], bg: "oklch(0.94 0.035 345)", fruit: "oklch(0.72 0.11 270)", soft: "oklch(0.86 0.06 300)", shapes: ["●", "✿", "◍"] },
+  { notes: ["garden mint", "lime", "cucumber"], bg: "oklch(0.95 0.04 165)", fruit: "var(--mint-deep)", soft: "oklch(0.9 0.09 135)", shapes: ["◐", "❦", "◐"] },
+  { notes: ["lemon", "ginger", "honeysuckle"], bg: "oklch(0.96 0.045 90)", fruit: "var(--sun)", soft: "oklch(0.9 0.07 80)", shapes: ["◑", "✺", "◑"] },
 ];
 
 export function FlavorLab() {
@@ -186,7 +186,7 @@ export function FlavorLab() {
   }, [i]);
 
   return (
-    <section id="flavor-lab" ref={ref} className="relative overflow-hidden bg-pink py-28">
+    <section id="flavor-lab" ref={ref} className="relative overflow-hidden py-28 motion-safe:transition-[background-color] motion-safe:duration-[800ms] motion-safe:ease-[cubic-bezier(.4,0,.2,1)]" style={{ background: accent.bg }}>
       <style>{`@keyframes flStar{0%,100%{transform:translateY(0) rotate(0)}50%{transform:translateY(-10px) rotate(18deg)}}@keyframes flFloat{0%,100%{transform:translateY(0)}50%{transform:translateY(-10px)}}@media (prefers-reduced-motion:reduce){.fl-anim{animation:none!important}}`}</style>
       <div className="fl-par pointer-events-none absolute -left-20 top-24 h-72 w-72 rounded-full opacity-60 transition-colors duration-700" data-speed="0.6" style={{ background: accent.fruit }} />
       <div className="fl-par pointer-events-none absolute -right-10 bottom-10 h-48 w-48 rounded-full opacity-50 transition-colors duration-700" data-speed="1.4" style={{ background: accent.soft }} />
