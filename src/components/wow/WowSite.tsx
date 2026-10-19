@@ -506,13 +506,69 @@ function Articles() {
 }
 
 function Footer() {
+  const ref = useRef<HTMLElement>(null);
+  useEffect(() => {
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    gsap.registerPlugin(ScrollTrigger);
+    const ctx = gsap.context(() => {
+      gsap.timeline({ scrollTrigger: { trigger: ref.current, start: "top 75%" } })
+        .from(".ft-line", { yPercent: 110, duration: 1, stagger: 0.1, ease: "power4.out" })
+        .from(".ft-can", { y: 60, rotate: 12, opacity: 0, duration: 1, ease: "power3.out" }, "-=0.8")
+        .from(".ft-fade", { y: 20, opacity: 0, duration: 0.6, stagger: 0.06, ease: "power3.out" }, "-=0.6");
+    }, ref);
+    return () => ctx.revert();
+  }, []);
+  const toTop = () => window.scrollTo({ top: 0, behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth" });
   return (
-    <footer className="bg-charcoal px-6 py-16 text-paper">
-      <div className="mx-auto flex max-w-6xl flex-col items-start justify-between gap-8 md:flex-row md:items-end">
-        <p className="display text-[18vw] md:text-[10rem]">wow fun</p>
-        <div className="text-sm opacity-70">
-          <p>hello@wowfun.co</p>
-          <p className="mt-1">© 2026 WOW FUN Beverages</p>
+    <footer ref={ref} className="relative overflow-hidden bg-charcoal px-6 pb-8 pt-24 text-paper">
+      <div className="mx-auto max-w-6xl">
+        <div className="relative grid items-center gap-10 md:grid-cols-[1.4fr_1fr]">
+          <div>
+            <h2 className="display text-[19vw] md:text-[10rem]" aria-label="That's the wow.">
+              <span className="block overflow-hidden"><span className="ft-line block">that's</span></span>
+              <span className="block overflow-hidden"><span className="ft-line block">the <span className="text-pink-deep">wow.</span></span></span>
+            </h2>
+            <p className="ft-fade mt-6 text-xl opacity-80 md:text-2xl">A little flavor. A lot of fun.</p>
+          </div>
+          <div className="relative mx-auto">
+            <div className="absolute -inset-6 rounded-full bg-pink-deep/25 blur-2xl" />
+            <div className="ft-can relative">
+              <img src={canBerry} alt="WOW FUN Blueberry Dream can" loading="lazy" width={576} height={1152} className="float-slow h-[44vh] w-auto drop-shadow-[var(--shadow-can)] motion-reduce:animate-none" />
+            </div>
+            <Star className="spin-slow absolute -left-8 top-8 h-12 w-12 motion-reduce:animate-none" />
+            <Sparkle className="absolute -right-4 bottom-16 h-9 w-9" />
+            <span className="absolute right-6 top-4 h-3 w-3 rounded-full bg-mint-deep" />
+            <span className="absolute bottom-6 left-0 h-2 w-2 rounded-full bg-sun" />
+          </div>
+        </div>
+
+        <div className="mt-20 grid gap-10 border-t border-paper/15 pt-12 md:grid-cols-3">
+          <div className="ft-fade">
+            <p className="display text-4xl">wow fun</p>
+            <p className="mt-3 max-w-xs text-sm opacity-70">Botanical, zero-sugar sodas made for good moments with your people.</p>
+            <a href="mailto:hello@wowfun.co" className="mt-4 inline-block text-sm underline-offset-4 transition hover:text-pink-deep hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-pink-deep">hello@wowfun.co</a>
+          </div>
+          <nav aria-label="Footer" className="ft-fade md:col-span-2">
+            <p className="text-[10px] uppercase tracking-widest opacity-50">Explore</p>
+            <ul className="mt-4 grid grid-cols-2 gap-x-6 gap-y-3 sm:grid-cols-3">
+              {NAV.map((n) => (
+                <li key={n.id}>
+                  <a href={`#${n.id}`} className="group inline-flex items-center gap-2 text-lg font-semibold transition-colors hover:text-pink-deep focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-pink-deep rounded">
+                    {n.label}
+                    <ArrowRight className="h-4 w-4 -translate-x-1 opacity-0 transition-all group-hover:translate-x-0 group-hover:opacity-100" />
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </nav>
+        </div>
+
+        <div className="mt-14 flex flex-wrap items-center justify-between gap-4 border-t border-paper/15 pt-6 text-xs opacity-80">
+          <p>© {new Date().getFullYear()} WOW FUN Beverages</p>
+          <p className="hidden sm:block">Stay fizzy. Stay fun.</p>
+          <button onClick={toTop} className="pill group flex items-center gap-2 border-paper px-4 py-2 font-semibold transition hover:bg-paper hover:text-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-pink-deep">
+            Back to top <ArrowRight className="h-3.5 w-3.5 -rotate-90 transition-transform group-hover:-translate-y-0.5" />
+          </button>
         </div>
       </div>
     </footer>
