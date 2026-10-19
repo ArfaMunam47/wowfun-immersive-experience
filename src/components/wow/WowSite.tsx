@@ -519,54 +519,88 @@ function Footer() {
     return () => ctx.revert();
   }, []);
   const toTop = () => window.scrollTo({ top: 0, behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth" });
+  const [mail, setMail] = useState("");
+  const [joined, setJoined] = useState(false);
+  const words = ["chill", "fizzy", "zero sugar", "botanical", "good vibes", "wow fun"];
   return (
-    <footer ref={ref} className="relative overflow-hidden bg-charcoal px-6 pb-8 pt-24 text-paper">
-      <div className="mx-auto max-w-6xl">
-        <div className="relative grid items-center gap-10 md:grid-cols-[1.4fr_1fr]">
+    <footer ref={ref} className="relative overflow-hidden bg-pink pt-0 text-ink">
+      <style>{`@keyframes ftMarq{to{transform:translateX(-50%)}}@media (prefers-reduced-motion:reduce){.ft-marq{animation:none!important}}`}</style>
+      <div className="overflow-hidden border-y-[1.5px] border-ink bg-sun py-4">
+        <div className="ft-marq flex w-max gap-8 whitespace-nowrap" style={{ animation: "ftMarq 22s linear infinite" }}>
+          {[...words, ...words, ...words, ...words].map((w, k) => (
+            <span key={k} className="display flex items-center gap-8 text-4xl md:text-5xl">{w}<Star className="h-8 w-8" /></span>
+          ))}
+        </div>
+      </div>
+
+      <div className="mx-auto max-w-6xl px-6 pb-8 pt-20">
+        <div className="relative grid items-end gap-10 md:grid-cols-[1.3fr_1fr]">
           <div>
-            <h2 className="display text-[19vw] md:text-[10rem]" aria-label="That's the wow.">
+            <h2 className="display text-[18vw] md:text-[9rem]" aria-label="That's the wow.">
               <span className="block overflow-hidden"><span className="ft-line block">that's</span></span>
-              <span className="block overflow-hidden"><span className="ft-line block">the <span className="text-pink-deep">wow.</span></span></span>
+              <span className="block overflow-hidden"><span className="ft-line block">the <span className="text-coral">wow.</span></span></span>
             </h2>
-            <p className="ft-fade mt-6 text-xl opacity-80 md:text-2xl">A little flavor. A lot of fun.</p>
+            <form
+              onSubmit={(e) => { e.preventDefault(); if (/.+@.+\..+/.test(mail)) setJoined(true); }}
+              className="ft-fade mt-8 flex max-w-md items-center gap-2 rounded-full border-[1.5px] border-ink bg-paper p-1.5"
+            >
+              {joined ? (
+                <p className="px-4 py-2 font-semibold">You're in the WOW Club ✿</p>
+              ) : (
+                <>
+                  <input type="email" required value={mail} onChange={(e) => setMail(e.target.value)} placeholder="your@email.com" aria-label="Email address" className="min-w-0 flex-1 bg-transparent px-4 text-sm outline-none" />
+                  <button className="rounded-full bg-ink px-5 py-2.5 text-sm font-semibold text-paper transition hover:bg-coral hover:text-ink">Join the club</button>
+                </>
+              )}
+            </form>
+            <p className="ft-fade mt-3 text-xs text-muted-foreground">New flavors and fizzy news. No spam, ever.</p>
           </div>
           <div className="relative mx-auto">
-            <div className="absolute -inset-6 rounded-full bg-pink-deep/25 blur-2xl" />
+            <div className="absolute inset-x-0 bottom-0 mx-auto h-64 w-64 rounded-full border-[1.5px] border-ink bg-mint" />
             <div className="ft-can relative">
-              <img src={canBerry} alt="WOW FUN Blueberry Dream can" loading="lazy" width={576} height={1152} className="float-slow h-[44vh] w-auto drop-shadow-[var(--shadow-can)] motion-reduce:animate-none" />
+              <img src={canBerry} alt="WOW FUN Blueberry Dream can" loading="lazy" width={576} height={1152} className="float-slow relative h-[46vh] w-auto -rotate-6 drop-shadow-[var(--shadow-can)] motion-reduce:animate-none" />
             </div>
-            <Star className="spin-slow absolute -left-8 top-8 h-12 w-12 motion-reduce:animate-none" />
-            <Sparkle className="absolute -right-4 bottom-16 h-9 w-9" />
-            <span className="absolute right-6 top-4 h-3 w-3 rounded-full bg-mint-deep" />
-            <span className="absolute bottom-6 left-0 h-2 w-2 rounded-full bg-sun" />
+            <Flower className="spin-slow absolute -left-10 top-10 h-16 w-16 motion-reduce:animate-none" />
+            <Sparkle className="absolute -right-6 top-1/3 h-10 w-10" />
           </div>
         </div>
 
-        <div className="mt-20 grid gap-10 border-t border-paper/15 pt-12 md:grid-cols-3">
-          <div className="ft-fade">
-            <p className="display text-4xl">wow fun</p>
-            <p className="mt-3 max-w-xs text-sm opacity-70">Botanical, zero-sugar sodas made for good moments with your people.</p>
-            <a href="mailto:hello@wowfun.co" className="mt-4 inline-block text-sm underline-offset-4 transition hover:text-pink-deep hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-pink-deep">hello@wowfun.co</a>
+        <div className="mt-16 grid gap-6 rounded-[2.5rem] border-[1.5px] border-ink bg-paper p-8 md:grid-cols-4 md:p-10">
+          <div className="ft-fade md:col-span-2">
+            <div className="flex items-center gap-3">
+              <span className="grid h-10 w-10 place-items-center rounded-full bg-ink font-bold text-paper">W</span>
+              <p className="display text-3xl">wow fun</p>
+            </div>
+            <p className="mt-4 max-w-xs text-sm text-muted-foreground">Botanical, zero-sugar sodas made for good moments with your people.</p>
+            <a href="mailto:hello@wowfun.co" className="mt-4 inline-block font-semibold underline-offset-4 hover:underline">hello@wowfun.co</a>
           </div>
-          <nav aria-label="Footer" className="ft-fade md:col-span-2">
-            <p className="text-[10px] uppercase tracking-widest opacity-50">Explore</p>
-            <ul className="mt-4 grid grid-cols-2 gap-x-6 gap-y-3 sm:grid-cols-3">
+          <nav aria-label="Footer" className="ft-fade">
+            <p className="text-[10px] uppercase tracking-widest text-muted-foreground">Explore</p>
+            <ul className="mt-4 space-y-2">
               {NAV.map((n) => (
                 <li key={n.id}>
-                  <a href={`#${n.id}`} className="group inline-flex items-center gap-2 text-lg font-semibold transition-colors hover:text-pink-deep focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-pink-deep rounded">
+                  <a href={`#${n.id}`} className="group inline-flex items-center gap-2 font-semibold transition hover:translate-x-1 hover:text-coral">
                     {n.label}
-                    <ArrowRight className="h-4 w-4 -translate-x-1 opacity-0 transition-all group-hover:translate-x-0 group-hover:opacity-100" />
+                    <ArrowRight className="h-3.5 w-3.5 opacity-0 transition group-hover:opacity-100" />
                   </a>
                 </li>
               ))}
             </ul>
           </nav>
+          <div className="ft-fade">
+            <p className="text-[10px] uppercase tracking-widest text-muted-foreground">Follow the fizz</p>
+            <div className="mt-4 flex flex-wrap gap-2">
+              {[["Instagram", "bg-pink"], ["TikTok", "bg-mint"], ["YouTube", "bg-sun"]].map(([s, c]) => (
+                <a key={s} href="#" className={`pill ${c} px-4 py-2 text-sm font-semibold transition hover:-translate-y-1 hover:rotate-[-3deg]`}>{s}</a>
+              ))}
+            </div>
+          </div>
         </div>
 
-        <div className="mt-14 flex flex-wrap items-center justify-between gap-4 border-t border-paper/15 pt-6 text-xs opacity-80">
+        <div className="mt-8 flex flex-wrap items-center justify-between gap-4 text-xs">
           <p>© {new Date().getFullYear()} WOW FUN Beverages</p>
-          <p className="hidden sm:block">Stay fizzy. Stay fun.</p>
-          <button onClick={toTop} className="pill group flex items-center gap-2 border-paper px-4 py-2 font-semibold transition hover:bg-paper hover:text-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-pink-deep">
+          <p className="hidden font-semibold sm:block">Stay fizzy. Stay fun. ✺</p>
+          <button onClick={toTop} className="pill group flex items-center gap-2 bg-paper px-4 py-2 font-semibold transition hover:bg-ink hover:text-paper">
             Back to top <ArrowRight className="h-3.5 w-3.5 -rotate-90 transition-transform group-hover:-translate-y-0.5" />
           </button>
         </div>
