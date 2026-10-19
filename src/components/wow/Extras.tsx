@@ -6,6 +6,10 @@ import { ARTICLES, FAQS, NAV, PRODUCTS, Burst, Eyes, Flower, Sparkle, Star } fro
 import skaters from "@/assets/skaters.jpg";
 import friends from "@/assets/friends.jpg";
 import canBerry from "@/assets/can-berry.png";
+import canLavender from "@/assets/can-lavender.png";
+import canVanilla from "@/assets/can-vanilla.png";
+import canMint from "@/assets/can-mint.png";
+import canLemon from "@/assets/can-lemon.png";
 
 const reduced = () => typeof window !== "undefined" && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
@@ -119,10 +123,12 @@ export function SearchOverlay({ open, onClose }: { open: boolean; onClose: () =>
 }
 
 /* ================= FLAVOR LAB ================= */
-const LAB = [
-  { notes: ["blueberry", "lavender", "vanilla bean"], bg: "oklch(0.94 0.035 345)", fruit: "oklch(0.72 0.11 270)", soft: "oklch(0.86 0.06 300)", shapes: ["●", "✿", "◍"] },
-  { notes: ["garden mint", "lime", "cucumber"], bg: "oklch(0.95 0.04 165)", fruit: "var(--mint-deep)", soft: "oklch(0.9 0.09 135)", shapes: ["◐", "❦", "◐"] },
-  { notes: ["lemon", "ginger", "honeysuckle"], bg: "oklch(0.96 0.045 90)", fruit: "var(--sun)", soft: "oklch(0.9 0.07 80)", shapes: ["◑", "✺", "◑"] },
+const FLAVORS = [
+  { id: "blueberry", name: "Blueberry Dream", img: canBerry, size: "330 ml", cal: "12 kcal", desc: "Juicy blueberry, a whisper of lavender and soft bubbles that slow the world down.", bg: "#FCE1E7", fruit: "#7895F5", soft: "#B9A9F5", notes: ["blueberry", "lavender", "vanilla bean"], shapes: ["●", "✿", "◍"] },
+  { id: "lavender", name: "Lavender", img: canLavender, size: "330 ml", cal: "10 kcal", desc: "Garden lavender and a hint of lemon balm. Light, floral and quietly calming.", bg: "#EDE3FA", fruit: "#9A78D0", soft: "#C8B3F0", notes: ["lavender", "lemon balm", "wild honey"], shapes: ["✿", "◐", "●"] },
+  { id: "vanilla", name: "Vanilla Bean", img: canVanilla, size: "330 ml", cal: "13 kcal", desc: "Madagascar vanilla, warm cream and a gentle fizz. Smooth like a sunny afternoon.", bg: "#FFF0CE", fruit: "#D7A84E", soft: "#EBD8A6", notes: ["vanilla bean", "cream soda", "brown sugar"], shapes: ["❦", "●", "◑"] },
+  { id: "mint", name: "Mint Lime", img: canMint, size: "330 ml", cal: "9 kcal", desc: "Garden mint and squeezed lime. Cool, bright and dangerously refreshing.", bg: "#DDF5EA", fruit: "#7FD3AE", soft: "#BFE89A", notes: ["garden mint", "lime", "cucumber"], shapes: ["◐", "❦", "◐"] },
+  { id: "lemon", name: "Lemon Zest", img: canLemon, size: "330 ml", cal: "11 kcal", desc: "Sun-ripened lemon with a ginger kick. Like summer in a can.", bg: "#FFF6C4", fruit: "#F2D33B", soft: "#F5DFA0", notes: ["lemon", "ginger", "honeysuckle"], shapes: ["◑", "✺", "◑"] },
 ];
 
 export function FlavorLab() {
@@ -133,9 +139,9 @@ export function FlavorLab() {
   const tl = useRef<gsap.core.Timeline | null>(null);
   const dir = useRef(1);
   const first = useRef(true);
-  const p = PRODUCTS[i]!;
-  const lab = LAB[i]!;
-  const accent = LAB[sel]!;
+  const p = FLAVORS[i]!;
+  const lab = p;
+  const accent = FLAVORS[sel]!;
 
   useEffect(() => {
     if (reduced()) return;
@@ -237,15 +243,15 @@ export function FlavorLab() {
         </div>
 
         <div className="mt-14 flex flex-wrap justify-center gap-3" role="tablist" aria-label="Choose a flavor">
-          {PRODUCTS.map((pr, k) => (
+          {FLAVORS.map((pr, k) => (
             <button
-              key={pr.name}
+              key={pr.id}
               role="tab"
               aria-selected={k === sel}
               onClick={() => choose(k)}
               className={`fl-ctrl pill group flex cursor-pointer items-center gap-3 py-2 pl-2 pr-5 text-sm font-semibold transition-all duration-300 hover:-translate-y-1 active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ink focus-visible:ring-offset-2 ${k === sel ? "bg-ink text-paper" : "bg-paper"}`}
             >
-              <span className="grid h-9 w-9 place-items-center overflow-hidden rounded-full ring-0 ring-ink transition-all duration-300 group-hover:scale-110 group-hover:ring-2" style={{ background: LAB[k]!.fruit }}>
+              <span className="grid h-9 w-9 place-items-center overflow-hidden rounded-full ring-0 ring-ink transition-all duration-300 group-hover:scale-110 group-hover:ring-2" style={{ background: pr.fruit }}>
                 <img src={pr.img} alt="" className="h-12 w-auto transition-transform duration-300 group-hover:rotate-12" />
               </span>
               <span className="transition-transform duration-300 group-hover:translate-x-0.5">{pr.name}</span>
