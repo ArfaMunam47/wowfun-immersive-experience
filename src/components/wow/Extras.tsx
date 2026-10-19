@@ -136,6 +136,8 @@ export function FlavorLab() {
   const [sel, setSel] = useState(0); // immediate selection (buttons)
   const [i, setI] = useState(0); // displayed content, single source for can/text/notes
   const [busy, setBusy] = useState(false);
+  const [bgI, setBgI] = useState(0);
+  const wipe = useRef<HTMLDivElement>(null);
   const tl = useRef<gsap.core.Timeline | null>(null);
   const dir = useRef(1);
   const first = useRef(true);
@@ -163,8 +165,13 @@ export function FlavorLab() {
     if (k === sel) return;
     dir.current = k > sel ? 1 : -1;
     setSel(k);
-    if (reduced() || !ref.current) { setI(k); return; }
+    if (!ref.current) { setI(k); setBgI(k); return; }
     tl.current?.kill();
+    if (wipe.current) {
+      gsap.killTweensOf(wipe.current);
+      wipe.current.style.background = FLAVORS[k]!.bg;
+      gsap.fromTo(wipe.current, { clipPath: "circle(0% at 50% 100%)" }, { clipPath: "circle(150% at 50% 100%)", duration: reduced() ? 0.01 : 0.9, ease: "power3.inOut", onComplete: () => { setBgI(k); gsap.set(wipe.current, { clipPath: "circle(0% at 50% 100%)" }); } });
+    }
     setBusy(true);
     const q = gsap.utils.selector(ref);
     const d = dir.current;
@@ -178,7 +185,7 @@ export function FlavorLab() {
 
   useEffect(() => {
     if (first.current) { first.current = false; return; }
-    if (reduced() || !ref.current) { setBusy(false); return; }
+    if (!ref.current) { setBusy(false); return; }
     const q = gsap.utils.selector(ref);
     const d = dir.current;
     tl.current?.kill();
@@ -192,7 +199,8 @@ export function FlavorLab() {
   }, [i]);
 
   return (
-    <section id="flavor-lab" ref={ref} className="relative overflow-hidden py-28 motion-safe:transition-[background-color] motion-safe:duration-[800ms] motion-safe:ease-[cubic-bezier(.4,0,.2,1)]" style={{ background: accent.bg }}>
+    <section id="flavor-lab" ref={ref} className="relative overflow-hidden py-28" style={{ background: FLAVORS[bgI]!.bg }}>
+      <div ref={wipe} aria-hidden className="pointer-events-none absolute inset-0" style={{ clipPath: "circle(0% at 50% 100%)" }} />
       <style>{`@keyframes flStar{0%,100%{transform:translateY(0) rotate(0)}50%{transform:translateY(-10px) rotate(18deg)}}@keyframes flFloat{0%,100%{transform:translateY(0)}50%{transform:translateY(-10px)}}@media (prefers-reduced-motion:reduce){.fl-anim{animation:none!important}}`}</style>
       <div className="fl-par pointer-events-none absolute -left-20 top-24 h-72 w-72 rounded-full opacity-60 transition-colors duration-700" data-speed="0.6" style={{ background: accent.fruit }} />
       <div className="fl-par pointer-events-none absolute -right-10 bottom-10 h-48 w-48 rounded-full opacity-50 transition-colors duration-700" data-speed="1.4" style={{ background: accent.soft }} />
