@@ -518,14 +518,11 @@ function Footer() {
     }, ref);
     return () => ctx.revert();
   }, []);
-  const toTop = () => window.scrollTo({ top: 0, behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth" });
-  const [mail, setMail] = useState("");
-  const [joined, setJoined] = useState(false);
   const words = ["chill", "fizzy", "zero sugar", "botanical", "good vibes", "wow fun"];
   return (
-    <footer ref={ref} className="relative overflow-hidden bg-pink pt-0 text-ink">
+    <footer ref={ref} className="relative overflow-hidden bg-charcoal text-paper">
       <style>{`@keyframes ftMarq{to{transform:translateX(-50%)}}@media (prefers-reduced-motion:reduce){.ft-marq{animation:none!important}}`}</style>
-      <div className="overflow-hidden border-y-[1.5px] border-ink bg-sun py-4">
+      <div className="overflow-hidden border-y-[1.5px] border-ink bg-sun py-4 text-ink">
         <div className="ft-marq flex w-max gap-8 whitespace-nowrap" style={{ animation: "ftMarq 22s linear infinite" }}>
           {[...words, ...words, ...words, ...words].map((w, k) => (
             <span key={k} className="display flex items-center gap-8 text-4xl md:text-5xl">{w}<Star className="h-8 w-8" /></span>
@@ -533,76 +530,59 @@ function Footer() {
         </div>
       </div>
 
-      <div className="mx-auto max-w-6xl px-6 pb-8 pt-20">
-        <div className="relative grid items-end gap-10 md:grid-cols-[1.3fr_1fr]">
-          <div>
-            <h2 className="display text-[18vw] md:text-[9rem]" aria-label="That's the wow.">
+      <div className="mx-auto max-w-6xl px-6 pb-8 pt-16 md:pt-24">
+        <div className="relative grid items-center gap-8 border-b border-paper/25 pb-14 md:grid-cols-[1.2fr_0.8fr] md:pb-20">
+          <div className="relative z-10">
+            <p className="ft-fade mb-6 text-xs font-semibold uppercase tracking-widest text-mint-deep">A little more wow, every day</p>
+            <h2 className="display text-7xl sm:text-8xl md:text-9xl" aria-label="That's the wow.">
               <span className="block overflow-hidden"><span className="ft-line block">that's</span></span>
-              <span className="block overflow-hidden"><span className="ft-line block">the <span className="text-coral">wow.</span></span></span>
+              <span className="block overflow-hidden"><span className="ft-line block">the <span className="text-sun">wow.</span></span></span>
             </h2>
-            <form
-              onSubmit={(e) => { e.preventDefault(); if (/.+@.+\..+/.test(mail)) setJoined(true); }}
-              className="ft-fade mt-8 flex max-w-md items-center gap-2 rounded-full border-[1.5px] border-ink bg-paper p-1.5"
-            >
-              {joined ? (
-                <p className="px-4 py-2 font-semibold">You're in the WOW Club ✿</p>
-              ) : (
-                <>
-                  <input type="email" required value={mail} onChange={(e) => setMail(e.target.value)} placeholder="your@email.com" aria-label="Email address" className="min-w-0 flex-1 bg-transparent px-4 text-sm outline-none" />
-                  <button className="rounded-full bg-ink px-5 py-2.5 text-sm font-semibold text-paper transition hover:bg-coral hover:text-ink">Join the club</button>
-                </>
-              )}
-            </form>
-            <p className="ft-fade mt-3 text-xs text-muted-foreground">New flavors and fizzy news. No spam, ever.</p>
+            <p className="ft-fade mt-7 max-w-sm text-base text-paper/75">Botanical bubbles for bright days and good company.</p>
+            <a href="mailto:hello@wowfun.co" className="pill ft-fade mt-6 inline-flex items-center gap-3 border-paper/50 px-5 py-3 font-semibold transition hover:bg-paper hover:text-ink">
+              Say hello <ArrowRight className="h-4 w-4" />
+            </a>
           </div>
-          <div className="relative mx-auto">
-            <div className="absolute inset-x-0 bottom-0 mx-auto h-64 w-64 rounded-full border-[1.5px] border-ink bg-mint" />
+          <div className="relative mx-auto mt-4 md:mt-0">
+            <div className="absolute inset-x-0 bottom-0 mx-auto h-56 w-56 rounded-full border-[1.5px] border-ink bg-mint md:h-64 md:w-64" />
             <div className="ft-can relative">
-              <img src={canBerry} alt="WOW FUN Blueberry Dream can" loading="lazy" width={576} height={1152} className="float-slow relative h-[46vh] w-auto -rotate-6 drop-shadow-[var(--shadow-can)] motion-reduce:animate-none" />
+              <img src={canBerry} alt="WOW FUN Blueberry Dream can" loading="lazy" width={576} height={1152} className="float-slow relative h-[42vh] max-h-[30rem] w-auto -rotate-6 drop-shadow-[var(--shadow-can)] motion-reduce:animate-none" />
             </div>
-            <Flower className="spin-slow absolute -left-10 top-10 h-16 w-16 motion-reduce:animate-none" />
-            <Sparkle className="absolute -right-6 top-1/3 h-10 w-10" />
+            <Flower className="spin-slow absolute -left-8 top-8 h-14 w-14 motion-reduce:animate-none" />
+            <Sparkle className="absolute -right-6 top-1/3 h-10 w-10 stroke-paper" />
           </div>
         </div>
 
-        <div className="mt-16 grid gap-6 rounded-[2.5rem] border-[1.5px] border-ink bg-paper p-8 md:grid-cols-4 md:p-10">
-          <div className="ft-fade md:col-span-2">
+        <div className="grid gap-10 border-b border-paper/25 py-10 md:grid-cols-[1.4fr_1fr_1fr] md:py-14">
+          <div className="ft-fade">
             <div className="flex items-center gap-3">
-              <span className="grid h-10 w-10 place-items-center rounded-full bg-ink font-bold text-paper">W</span>
+              <span className="grid h-10 w-10 place-items-center rounded-full bg-sun font-bold text-ink">W</span>
               <p className="display text-3xl">wow fun</p>
             </div>
-            <p className="mt-4 max-w-xs text-sm text-muted-foreground">Botanical, zero-sugar sodas made for good moments with your people.</p>
-            <a href="mailto:hello@wowfun.co" className="mt-4 inline-block font-semibold underline-offset-4 hover:underline">hello@wowfun.co</a>
+            <p className="mt-4 max-w-xs text-sm text-paper/65">Botanical, zero-sugar sodas made for good moments with your people.</p>
           </div>
           <nav aria-label="Footer" className="ft-fade">
-            <p className="text-[10px] uppercase tracking-widest text-muted-foreground">Explore</p>
-            <ul className="mt-4 space-y-2">
+            <p className="text-xs font-semibold uppercase tracking-widest text-mint-deep">Explore</p>
+            <ul className="mt-4 grid grid-cols-2 gap-x-5 gap-y-3">
               {NAV.map((n) => (
                 <li key={n.id}>
-                  <a href={`#${n.id}`} className="group inline-flex items-center gap-2 font-semibold transition hover:translate-x-1 hover:text-coral">
-                    {n.label}
-                    <ArrowRight className="h-3.5 w-3.5 opacity-0 transition group-hover:opacity-100" />
-                  </a>
+                  <a href={`#${n.id}`} className="inline-flex items-center gap-2 text-sm font-medium capitalize text-paper/75 transition hover:text-sun">{n.label}</a>
                 </li>
               ))}
             </ul>
           </nav>
           <div className="ft-fade">
-            <p className="text-[10px] uppercase tracking-widest text-muted-foreground">Follow the fizz</p>
-            <div className="mt-4 flex flex-wrap gap-2">
-              {[["Instagram", "bg-pink"], ["TikTok", "bg-mint"], ["YouTube", "bg-sun"]].map(([s, c]) => (
-                <a key={s} href="#" className={`pill ${c} px-4 py-2 text-sm font-semibold transition hover:-translate-y-1 hover:rotate-[-3deg]`}>{s}</a>
-              ))}
-            </div>
+            <p className="text-xs font-semibold uppercase tracking-widest text-mint-deep">Get in touch</p>
+            <a href="mailto:hello@wowfun.co" className="mt-4 inline-flex items-center gap-2 text-sm font-semibold transition hover:text-sun">hello@wowfun.co <ArrowRight className="h-4 w-4" /></a>
           </div>
         </div>
 
-        <div className="mt-8 flex flex-wrap items-center justify-between gap-4 text-xs">
+        <div className="flex flex-wrap items-center justify-between gap-4 pt-6 text-xs text-paper/60">
           <p>© {new Date().getFullYear()} WOW FUN Beverages</p>
-          <p className="hidden font-semibold sm:block">Stay fizzy. Stay fun. ✺</p>
-          <button onClick={toTop} className="pill group flex items-center gap-2 bg-paper px-4 py-2 font-semibold transition hover:bg-ink hover:text-paper">
-            Back to top <ArrowRight className="h-3.5 w-3.5 -rotate-90 transition-transform group-hover:-translate-y-0.5" />
-          </button>
+          <p className="font-semibold">Stay fizzy. Stay fun. ✺</p>
+          <a href="#top" className="inline-flex items-center gap-2 font-semibold text-paper transition hover:text-sun">
+            Back to top <ArrowRight className="h-3.5 w-3.5 -rotate-90" />
+          </a>
         </div>
       </div>
     </footer>
