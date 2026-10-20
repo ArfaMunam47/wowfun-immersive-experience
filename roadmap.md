@@ -1,0 +1,3 @@
+- [x] Restore a visible flavor-change transition when selecting a flavor.
+- [ ] Refine the footer design without adding pretend signup or social destinations.
+- [ ] Verify the changes in the preview and check the latest build status.

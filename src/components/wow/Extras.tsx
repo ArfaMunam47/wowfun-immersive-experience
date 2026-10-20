@@ -165,6 +165,7 @@ export function FlavorLab() {
     if (k === sel) return;
     dir.current = k > sel ? 1 : -1;
     setSel(k);
+    setBgI(k);
     if (!ref.current) { setI(k); setBgI(k); return; }
     tl.current?.kill();
     if (wipe.current) {
@@ -199,7 +200,7 @@ export function FlavorLab() {
   }, [i]);
 
   return (
-    <section id="flavor-lab" ref={ref} className="relative overflow-hidden py-28" style={{ background: FLAVORS[bgI]!.bg }}>
+    <section id="flavor-lab" ref={ref} aria-busy={busy} className="relative overflow-hidden py-28 transition-colors duration-700 motion-reduce:transition-none" style={{ background: FLAVORS[bgI]!.bg }}>
       <div ref={wipe} aria-hidden className="pointer-events-none absolute inset-0" style={{ clipPath: "circle(0% at 50% 100%)" }} />
       <style>{`@keyframes flStar{0%,100%{transform:translateY(0) rotate(0)}50%{transform:translateY(-10px) rotate(18deg)}}@keyframes flFloat{0%,100%{transform:translateY(0)}50%{transform:translateY(-10px)}}@media (prefers-reduced-motion:reduce){.fl-anim{animation:none!important}}`}</style>
       <div className="fl-par pointer-events-none absolute -left-20 top-24 h-72 w-72 rounded-full opacity-60 transition-colors duration-700" data-speed="0.6" style={{ background: accent.fruit }} />
