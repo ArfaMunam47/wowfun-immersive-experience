@@ -1,3 +1,3 @@
-- [x] Finish and verify a visible flavor-change transition when selecting a flavor.
-- [x] Refine the footer design without pretend signup or social destinations.
-- [x] Verify desktop/mobile presentation and check the latest build status.
+- [ ] Center the WOW can precisely over the footer accent circle.
+- [ ] Make flavor selection reliably animate the can, details, notes, and matching background.
+- [ ] Verify switching across all flavors and check desktop/mobile rendering and build status.
