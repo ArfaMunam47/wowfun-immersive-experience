@@ -544,8 +544,8 @@ function Footer() {
             </a>
           </div>
           <div className="relative mx-auto mt-4 flex w-full justify-center md:mt-0">
-            <div className="absolute inset-x-0 bottom-0 mx-auto h-56 w-56 rounded-full border-[1.5px] border-ink bg-mint md:h-64 md:w-64" />
             <div className="ft-can relative">
+              <div className="absolute left-1/2 top-1/2 h-56 w-56 -translate-x-1/2 -translate-y-1/2 rounded-full border-[1.5px] border-ink bg-mint md:h-64 md:w-64" />
               <img src={canBerry} alt="WOW FUN Blueberry Dream can" loading="lazy" width={576} height={1152} className="float-slow relative h-[42vh] max-h-[30rem] w-auto -rotate-6 drop-shadow-[var(--shadow-can)] motion-reduce:animate-none" />
             </div>
             <Flower className="spin-slow absolute -left-8 top-8 h-14 w-14 motion-reduce:animate-none" />
