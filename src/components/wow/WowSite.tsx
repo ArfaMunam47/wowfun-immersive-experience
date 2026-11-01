@@ -32,12 +32,12 @@ export const Sparkle = ({ className = "" }: { className?: string }) => (
     <path d="M50 0 C54 40 60 46 100 50 C60 54 54 60 50 100 C46 60 40 54 0 50 C40 46 46 40 50 0Z" fill="none" stroke="var(--ink)" strokeWidth="3" />
   </svg>
 );
-export const Flower = ({ className = "" }: { className?: string }) => (
+export const Flower = ({ className = "", petal = "var(--coral)", center = "var(--sun)" }: { className?: string; petal?: string; center?: string }) => (
   <svg viewBox="0 0 100 100" className={className}>
     {[0, 45, 90, 135, 180, 225, 270, 315].map((r) => (
-      <ellipse key={r} cx="50" cy="24" rx="11" ry="22" fill="var(--coral)" stroke="var(--ink)" strokeWidth="2.5" transform={`rotate(${r} 50 50)`} />
+      <ellipse key={r} cx="50" cy="24" rx="11" ry="22" fill={petal} stroke="var(--ink)" strokeWidth="2.5" transform={`rotate(${r} 50 50)`} />
     ))}
-    <circle cx="50" cy="50" r="13" fill="var(--sun)" stroke="var(--ink)" strokeWidth="2.5" />
+    <circle cx="50" cy="50" r="13" fill={center} stroke="var(--ink)" strokeWidth="2.5" />
   </svg>
 );
 export const Eyes = ({ className = "" }: { className?: string }) => (
