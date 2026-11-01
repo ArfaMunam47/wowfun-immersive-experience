@@ -549,7 +549,7 @@ function Footer() {
               <img src={canBerry} alt="WOW FUN Blueberry Dream can" loading="lazy" width={576} height={1152} className="float-slow relative h-[42vh] max-h-[30rem] w-auto -rotate-6 drop-shadow-[var(--shadow-can)] motion-reduce:animate-none" />
             </div>
             <Flower className="spin-slow absolute -left-8 top-8 h-14 w-14 motion-reduce:animate-none" />
-            <Sparkle className="absolute -right-6 top-1/3 h-10 w-10 stroke-paper" />
+            <Flower className="spin-slow absolute -right-8 top-1/3 h-14 w-14 motion-reduce:animate-none" petal="var(--sun)" center="var(--coral)" />
           </div>
         </div>
 
