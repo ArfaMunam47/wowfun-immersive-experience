@@ -1,3 +1,3 @@
-- [ ] Center the WOW can precisely over the footer accent circle.
-- [ ] Make flavor selection reliably animate the can, details, notes, and matching background.
-- [ ] Verify switching across all flavors and check desktop/mobile rendering and build status.
+- [x] Center the WOW can precisely over the footer accent circle.
+- [x] Make flavor selection reliably animate the can, details, notes, and matching background.
+- [x] Verify switching across all flavors and check desktop/mobile rendering and build status.
