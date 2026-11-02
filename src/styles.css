@@ -91,6 +91,12 @@
   }
 }
 
+/* Custom cursor: hide the native pointer only while the WOW cursor is active (fine pointers, motion allowed) */
+@media (pointer: fine) {
+  html.wow-cursor,
+  html.wow-cursor * { cursor: none !important; }
+}
+
 @utility display {
   font-family: var(--font-display);
   font-weight: 700;
