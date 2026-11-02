@@ -310,6 +310,10 @@ function Products() {
           touch.current = null;
         }}
       >
+        <div
+          className="pointer-events-none absolute left-1/2 top-1/2 h-[55vh] w-[26rem] -translate-x-1/2 -translate-y-1/2 rounded-full opacity-30 blur-3xl transition-colors duration-700"
+          style={{ background: p.glow }}
+        />
         {PRODUCTS.map((pr, k) => {
           let off = k - i;
           if (off > n / 2) off -= n;
