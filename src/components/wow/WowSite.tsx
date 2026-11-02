@@ -56,6 +56,54 @@ export const Burst = ({ className = "" }: { className?: string }) => (
   </svg>
 );
 
+/* ---------- Custom cursor ---------- */
+function WowCursor() {
+  const dot = useRef<HTMLDivElement>(null);
+  const trail = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    if (!window.matchMedia("(pointer: fine)").matches || window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    const root = document.documentElement;
+    root.classList.add("wow-cursor");
+    const qx = gsap.quickTo(dot.current, "x", { duration: 0.25, ease: "power3.out" });
+    const qy = gsap.quickTo(dot.current, "y", { duration: 0.25, ease: "power3.out" });
+    const tx = gsap.quickTo(trail.current, "x", { duration: 0.7, ease: "power3.out" });
+    const ty = gsap.quickTo(trail.current, "y", { duration: 0.7, ease: "power3.out" });
+    const setOpacity = (o: number) => gsap.to([dot.current, trail.current], { opacity: o, duration: 0.25, overwrite: "auto" });
+    const move = (e: MouseEvent) => {
+      setOpacity(1);
+      qx(e.clientX); qy(e.clientY);
+      tx(e.clientX); ty(e.clientY);
+    };
+    const hover = (e: MouseEvent) => {
+      const el = e.target as Element | null;
+      const interactive = el?.closest?.('a, button, [role="tab"], input, textarea, article, [data-cursor="hover"]');
+      gsap.to(dot.current, { scale: interactive ? 1.9 : 1, rotate: interactive ? 45 : 0, duration: 0.35, ease: "power3.out", overwrite: "auto" });
+      gsap.to(trail.current, { scale: interactive ? 0.4 : 1, duration: 0.35, ease: "power3.out", overwrite: "auto" });
+    };
+    const press = () => gsap.fromTo(dot.current, { scale: "+=0" }, { scale: "-=0.5", duration: 0.14, yoyo: true, repeat: 1, overwrite: "auto" });
+    window.addEventListener("mousemove", move, { passive: true });
+    window.addEventListener("mouseover", hover, { passive: true });
+    window.addEventListener("mousedown", press, { passive: true });
+    document.documentElement.addEventListener("mouseleave", () => setOpacity(0));
+    return () => {
+      root.classList.remove("wow-cursor");
+      window.removeEventListener("mousemove", move);
+      window.removeEventListener("mouseover", hover);
+      window.removeEventListener("mousedown", press);
+    };
+  }, []);
+  return (
+    <div aria-hidden="true" className="pointer-events-none fixed inset-0 z-[100] hidden [@media(pointer:fine)]:block">
+      <div ref={trail} className="absolute left-0 top-0 opacity-0">
+        <Sparkle className="h-7 w-7 opacity-70 drop-shadow-[0_0_3px_var(--paper)]" />
+      </div>
+      <div ref={dot} className="absolute left-0 top-0 opacity-0">
+        <Flower className="h-8 w-8 drop-shadow-[0_2px_6px_oklch(0_0_0/0.3)]" petal="var(--coral)" center="var(--sun)" />
+      </div>
+    </div>
+  );
+}
+
 /* ---------- Nav ---------- */
 function Nav({ active }: { active: string }) {
   const [open, setOpen] = useState(false);
@@ -127,6 +175,17 @@ function Hero() {
         .from(".h-deco", { scale: 0, rotate: -90, opacity: 0, duration: 0.7, stagger: 0.1 }, "-=0.6");
     }, ref);
     return () => ctx.revert();
+  }, []);
+  useEffect(() => {
+    if (!window.matchMedia("(pointer: fine)").matches || window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    const qx = gsap.quickTo(".h-can", "x", { duration: 0.8, ease: "power2.out" });
+    const qy = gsap.quickTo(".h-can", "y", { duration: 0.8, ease: "power2.out" });
+    const onMove = (e: MouseEvent) => {
+      qx((e.clientX / window.innerWidth - 0.5) * 24);
+      qy((e.clientY / window.innerHeight - 0.5) * 16);
+    };
+    window.addEventListener("mousemove", onMove, { passive: true });
+    return () => window.removeEventListener("mousemove", onMove);
   }, []);
   return (
     <section id="top" ref={ref} className="h-bg relative flex min-h-screen items-center overflow-hidden bg-pink pt-20">
@@ -242,6 +301,7 @@ function Products() {
       />
       <div
         className="relative mx-auto -mt-[8vw] h-[62vh] max-w-6xl"
+        style={{ perspective: "1400px" }}
         onTouchStart={(e) => (touch.current = e.touches[0]?.clientX ?? null)}
         onTouchEnd={(e) => {
           if (touch.current == null) return;
@@ -250,6 +310,10 @@ function Products() {
           touch.current = null;
         }}
       >
+        <div
+          className="pointer-events-none absolute left-1/2 top-1/2 h-[55vh] w-[26rem] -translate-x-1/2 -translate-y-1/2 rounded-full opacity-30 blur-3xl transition-colors duration-700"
+          style={{ background: p.glow }}
+        />
         {PRODUCTS.map((pr, k) => {
           let off = k - i;
           if (off > n / 2) off -= n;
@@ -266,9 +330,11 @@ function Products() {
               onClick={() => !center && go(off)}
               className="absolute left-1/2 top-0 h-full w-auto cursor-pointer drop-shadow-[var(--shadow-can)] transition-all duration-[900ms] ease-[cubic-bezier(.7,0,.2,1)]"
               style={{
-                transform: `translateX(calc(-50% + ${off * 46}vw)) rotate(${off * 14}deg) scale(${center ? 1 : 0.8})`,
+                transform: `translate3d(calc(-50% + ${off * 46}vw), ${center ? "0px" : `${off * 2}vh`}, 0) rotate(${off * 14}deg) rotateY(${center ? 0 : off > 0 ? -24 : 24}deg) scale(${center ? 1 : 0.78})`,
                 opacity: Math.abs(off) > 1 ? 0 : center ? 1 : 0.7,
+                filter: center ? "blur(0px) brightness(1.06)" : "blur(4px) brightness(0.7)",
                 zIndex: center ? 2 : 1,
+                transformStyle: "preserve-3d",
               }}
             />
           );
@@ -611,6 +677,7 @@ export function WowSite() {
   }, []);
   return (
     <main className="overflow-x-hidden">
+      <WowCursor />
       <Nav active={active} />
       <Hero />
       <Why />
