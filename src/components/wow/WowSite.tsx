@@ -677,6 +677,7 @@ export function WowSite() {
   }, []);
   return (
     <main className="overflow-x-hidden">
+      <WowCursor />
       <Nav active={active} />
       <Hero />
       <Why />
