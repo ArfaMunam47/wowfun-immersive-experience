@@ -56,6 +56,54 @@ export const Burst = ({ className = "" }: { className?: string }) => (
   </svg>
 );
 
+/* ---------- Custom cursor ---------- */
+function WowCursor() {
+  const dot = useRef<HTMLDivElement>(null);
+  const trail = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    if (!window.matchMedia("(pointer: fine)").matches || window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    const root = document.documentElement;
+    root.classList.add("wow-cursor");
+    const qx = gsap.quickTo(dot.current, "x", { duration: 0.25, ease: "power3.out" });
+    const qy = gsap.quickTo(dot.current, "y", { duration: 0.25, ease: "power3.out" });
+    const tx = gsap.quickTo(trail.current, "x", { duration: 0.7, ease: "power3.out" });
+    const ty = gsap.quickTo(trail.current, "y", { duration: 0.7, ease: "power3.out" });
+    const setOpacity = (o: number) => gsap.to([dot.current, trail.current], { opacity: o, duration: 0.25, overwrite: "auto" });
+    const move = (e: MouseEvent) => {
+      setOpacity(1);
+      qx(e.clientX); qy(e.clientY);
+      tx(e.clientX); ty(e.clientY);
+    };
+    const hover = (e: MouseEvent) => {
+      const el = e.target as Element | null;
+      const interactive = el?.closest?.('a, button, [role="tab"], input, textarea, article, [data-cursor="hover"]');
+      gsap.to(dot.current, { scale: interactive ? 1.9 : 1, rotate: interactive ? 45 : 0, duration: 0.35, ease: "power3.out", overwrite: "auto" });
+      gsap.to(trail.current, { scale: interactive ? 0.4 : 1, duration: 0.35, ease: "power3.out", overwrite: "auto" });
+    };
+    const press = () => gsap.fromTo(dot.current, { scale: "+=0" }, { scale: "-=0.5", duration: 0.14, yoyo: true, repeat: 1, overwrite: "auto" });
+    window.addEventListener("mousemove", move, { passive: true });
+    window.addEventListener("mouseover", hover, { passive: true });
+    window.addEventListener("mousedown", press, { passive: true });
+    document.documentElement.addEventListener("mouseleave", () => setOpacity(0));
+    return () => {
+      root.classList.remove("wow-cursor");
+      window.removeEventListener("mousemove", move);
+      window.removeEventListener("mouseover", hover);
+      window.removeEventListener("mousedown", press);
+    };
+  }, []);
+  return (
+    <div aria-hidden="true" className="pointer-events-none fixed inset-0 z-[100] hidden [@media(pointer:fine)]:block">
+      <div ref={trail} className="absolute left-0 top-0 opacity-0">
+        <Sparkle className="h-7 w-7 opacity-70 drop-shadow-[0_0_3px_var(--paper)]" />
+      </div>
+      <div ref={dot} className="absolute left-0 top-0 opacity-0">
+        <Flower className="h-8 w-8 drop-shadow-[0_2px_6px_oklch(0_0_0/0.3)]" petal="var(--coral)" center="var(--sun)" />
+      </div>
+    </div>
+  );
+}
+
 /* ---------- Nav ---------- */
 function Nav({ active }: { active: string }) {
   const [open, setOpen] = useState(false);
