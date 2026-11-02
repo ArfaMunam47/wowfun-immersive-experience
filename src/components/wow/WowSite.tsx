@@ -301,6 +301,7 @@ function Products() {
       />
       <div
         className="relative mx-auto -mt-[8vw] h-[62vh] max-w-6xl"
+        style={{ perspective: "1400px" }}
         onTouchStart={(e) => (touch.current = e.touches[0]?.clientX ?? null)}
         onTouchEnd={(e) => {
           if (touch.current == null) return;
