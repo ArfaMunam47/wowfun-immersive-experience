@@ -176,6 +176,17 @@ function Hero() {
     }, ref);
     return () => ctx.revert();
   }, []);
+  useEffect(() => {
+    if (!window.matchMedia("(pointer: fine)").matches || window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    const qx = gsap.quickTo(".h-can", "x", { duration: 0.8, ease: "power2.out" });
+    const qy = gsap.quickTo(".h-can", "y", { duration: 0.8, ease: "power2.out" });
+    const onMove = (e: MouseEvent) => {
+      qx((e.clientX / window.innerWidth - 0.5) * 24);
+      qy((e.clientY / window.innerHeight - 0.5) * 16);
+    };
+    window.addEventListener("mousemove", onMove, { passive: true });
+    return () => window.removeEventListener("mousemove", onMove);
+  }, []);
   return (
     <section id="top" ref={ref} className="h-bg relative flex min-h-screen items-center overflow-hidden bg-pink pt-20">
       <div className="relative mx-auto w-full max-w-6xl px-6">
