@@ -326,9 +326,11 @@ function Products() {
               onClick={() => !center && go(off)}
               className="absolute left-1/2 top-0 h-full w-auto cursor-pointer drop-shadow-[var(--shadow-can)] transition-all duration-[900ms] ease-[cubic-bezier(.7,0,.2,1)]"
               style={{
-                transform: `translateX(calc(-50% + ${off * 46}vw)) rotate(${off * 14}deg) scale(${center ? 1 : 0.8})`,
+                transform: `translate3d(calc(-50% + ${off * 46}vw), ${center ? "0px" : `${off * 2}vh`}, 0) rotate(${off * 14}deg) rotateY(${center ? 0 : off > 0 ? -24 : 24}deg) scale(${center ? 1 : 0.78})`,
                 opacity: Math.abs(off) > 1 ? 0 : center ? 1 : 0.7,
+                filter: center ? "blur(0px) brightness(1.06)" : "blur(4px) brightness(0.7)",
                 zIndex: center ? 2 : 1,
+                transformStyle: "preserve-3d",
               }}
             />
           );
