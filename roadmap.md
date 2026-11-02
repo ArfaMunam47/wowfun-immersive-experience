@@ -7,4 +7,4 @@
 - [x] Upgrade the product showcase transitions: 3D depth (perspective + rotateY), blur-to-sharp, lighting glow behind the center can, dimmed/blurred side cans.
 - [x] Add the WOW custom cursor (flower pointer + trailing sparkle, hover/press feedback, fine-pointer only, reduced-motion safe, native cursor hidden only while active).
 - [x] Add subtle hero can mouse parallax.
-- [ ] Verify everything end-to-end in the browser (showcase transition, cursor across sections, flavor lab, console errors, mobile layout).
+- [x] Verify everything end-to-end in the browser (showcase transition, cursor across sections, flavor lab, console errors, mobile layout).
