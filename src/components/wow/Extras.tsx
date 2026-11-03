@@ -138,6 +138,7 @@ export function FlavorLab() {
   const [transitionKey, setTransitionKey] = useState(0);
   const [transitionDir, setTransitionDir] = useState<"next" | "prev">("next");
   const exitTimer = useRef<number | null>(null);
+  const pendingFocus = useRef<number | null>(null);
   const p = FLAVORS[sel]!;
   const lab = p;
   const lp = leaving === null ? null : FLAVORS[leaving]!;
