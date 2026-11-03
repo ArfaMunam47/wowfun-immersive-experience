@@ -226,49 +226,61 @@ export function FlavorLab() {
         </div>
 
         <div className="mt-12 grid items-center gap-10 md:grid-cols-[1fr_auto_1fr]" aria-live="polite">
-          <div key={`details-${transitionKey}`} className="fl-copy-enter order-2 min-h-[16rem] md:order-1">
-            <span className="pill inline-block bg-paper px-3 py-1 text-[10px] uppercase tracking-widest">Experiment No. 0{sel + 1}</span>
-            <h3 className="display mt-5 text-5xl md:text-6xl" style={{ lineHeight: 1 }}>{p.name}</h3>
-            <p className="mt-4 max-w-sm text-muted-foreground">{p.desc}</p>
-            <div className="mt-6 flex gap-6 text-sm">
-              <div><p className="text-[10px] uppercase tracking-widest text-muted-foreground">Size</p><p className="font-semibold">{p.size}</p></div>
-              <div><p className="text-[10px] uppercase tracking-widest text-muted-foreground">Energy</p><p className="font-semibold">{p.cal}</p></div>
-              <div><p className="text-[10px] uppercase tracking-widest text-muted-foreground">Sugar</p><p className="font-semibold">0 g</p></div>
+          <div className="relative order-2 min-h-[16rem] md:order-1">
+            {lp && (
+              <div key={`copy-out-${transitionKey}`} aria-hidden="true" className={`pointer-events-none absolute inset-0 fl-copy-out-${transitionDir}`}>
+                {copyFor(lp)}
+              </div>
+            )}
+            <div key={`details-${transitionKey}`} className={`relative fl-copy-enter ${lp ? "fl-copy-enter-delay" : ""}`}>
+              {copyFor(lab)}
             </div>
           </div>
 
-          <div key={`can-${transitionKey}`} className={`fl-can relative order-1 mx-auto md:order-2 fl-can-enter-${transitionDir}`}>
+          <div className="fl-can relative order-1 mx-auto md:order-2">
             <div className="fl-shadow absolute inset-x-0 bottom-2 mx-auto h-10 w-40 rounded-full bg-ink/20 blur-xl" />
-            <div className="fl-anim" style={{ animation: "flFloat 5s ease-in-out infinite" }}>
-              <img src={p.img} alt={p.name} width={576} height={1152} className="fl-img relative h-[52vh] w-auto object-contain drop-shadow-[var(--shadow-can)]" />
+            <div key={`can-${transitionKey}`} className={`relative fl-can-enter-${transitionDir}`}>
+              <div className="fl-anim" style={{ animation: "flFloat 5s ease-in-out infinite" }}>
+                <img src={lab.img} alt={lab.name} width={576} height={1152} className="fl-img relative h-[52vh] w-auto object-contain drop-shadow-[var(--shadow-can)]" />
+              </div>
+              <span className="fl-par absolute -right-10 top-6" data-speed="1.8">
+                <span className="fl-anim block" style={{ animation: "flStar 7s ease-in-out infinite" }}><Star className="h-14 w-14" /></span>
+              </span>
             </div>
-            <span className="fl-par absolute -right-10 top-6" data-speed="1.8">
-              <span className="fl-anim block" style={{ animation: "flStar 7s ease-in-out infinite" }}><Star className="h-14 w-14" /></span>
-            </span>
+            {lp && (
+              <div key={`can-out-${transitionKey}`} aria-hidden="true" className={`pointer-events-none absolute inset-0 z-10 fl-can-exit-${transitionDir}`}>
+                <div className="flex h-full items-center justify-center">
+                  <div className="fl-anim" style={{ animation: "flFloat 5s ease-in-out infinite" }}>
+                    <img src={lp.img} alt="" aria-hidden="true" width={576} height={1152} className="fl-img h-[52vh] w-auto object-contain drop-shadow-[var(--shadow-can)]" />
+                  </div>
+                </div>
+              </div>
+            )}
           </div>
 
-          <div className="order-3 min-h-[13rem]">
+          <div className="relative order-3 min-h-[13rem]">
             <p className="text-[10px] uppercase tracking-widest text-muted-foreground">Flavor notes</p>
-            <ul key={`notes-${transitionKey}`} className="mt-4 space-y-3">
-              {lab.notes.map((n, k) => (
-                <li key={n} className="fl-note-enter group flex cursor-default items-center gap-4" style={{ animationDelay: `${k * 80}ms` }}>
-                  <span className="fl-dot pill grid h-12 w-12 place-items-center text-xl transition-transform duration-300 group-hover:scale-110 group-hover:-rotate-6" style={{ background: k === 0 ? lab.fruit : lab.soft }}>{lab.shapes[k]}</span>
-                  <span className="text-xl font-semibold transition-transform duration-300 group-hover:translate-x-1">{n}</span>
-                </li>
-              ))}
-            </ul>
+            {lp && (
+              <div key={`notes-out-${transitionKey}`} aria-hidden="true" className={`pointer-events-none absolute inset-x-0 top-6 fl-notes-out-${transitionDir}`}>
+                {notesFor(lp, false)}
+              </div>
+            )}
+            <div key={`notes-${transitionKey}`} className="relative">
+              {notesFor(lab, true)}
+            </div>
           </div>
         </div>
 
-        <div className="mt-14 flex flex-wrap justify-center gap-3" role="tablist" aria-label="Choose a flavor">
+        <div className="mt-14 flex flex-wrap justify-center gap-3" role="tablist" aria-label="Choose a flavor" onKeyDown={onTablistKey}>
           {FLAVORS.map((pr, k) => (
             <button
-              key={pr.id}
+              key={`${pr.id}-${k === sel ? `sel-${transitionKey}` : "idle"}`}
+              id={`flavor-tab-${k}`}
               role="tab"
               aria-selected={k === sel}
               tabIndex={k === sel ? 0 : -1}
               onClick={() => choose(k)}
-              className={`fl-ctrl pill group flex cursor-pointer items-center gap-3 py-2 pl-2 pr-5 text-sm font-semibold transition-all duration-300 hover:-translate-y-1 active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ink focus-visible:ring-offset-2 ${k === sel ? "bg-ink text-paper" : "bg-paper"}`}
+              className={`fl-ctrl pill group flex cursor-pointer items-center gap-3 py-2 pl-2 pr-5 text-sm font-semibold transition-all duration-300 hover:-translate-y-1 active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ink focus-visible:ring-offset-2 ${k === sel ? "fl-tab-pop bg-ink text-paper" : "bg-paper"}`}
             >
               <span className="grid h-9 w-9 place-items-center overflow-hidden rounded-full ring-0 ring-ink transition-all duration-300 group-hover:scale-110 group-hover:ring-2" style={{ background: pr.fruit }}>
                 <img src={pr.img} alt="" className="h-12 w-auto transition-transform duration-300 group-hover:rotate-12" />
