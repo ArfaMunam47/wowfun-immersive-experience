@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState, type KeyboardEvent as ReactKeyboardEvent } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { ArrowRight, Search, X } from "lucide-react";
@@ -134,10 +134,19 @@ const FLAVORS = [
 export function FlavorLab() {
   const ref = useRef<HTMLElement>(null);
   const [sel, setSel] = useState(0);
+  const [leaving, setLeaving] = useState<number | null>(null);
   const [transitionKey, setTransitionKey] = useState(0);
   const [transitionDir, setTransitionDir] = useState<"next" | "prev">("next");
+  const exitTimer = useRef<number | null>(null);
   const p = FLAVORS[sel]!;
   const lab = p;
+  const lp = leaving === null ? null : FLAVORS[leaving]!;
+
+  useEffect(() => {
+    return () => {
+      if (exitTimer.current) window.clearTimeout(exitTimer.current);
+    };
+  }, []);
 
   useEffect(() => {
     if (reduced()) return;
@@ -157,9 +166,48 @@ export function FlavorLab() {
   const choose = (k: number) => {
     if (k === sel) return;
     setTransitionDir(k > sel ? "next" : "prev");
+    setLeaving(sel);
     setSel(k);
     setTransitionKey((key) => key + 1);
+    if (exitTimer.current) window.clearTimeout(exitTimer.current);
+    exitTimer.current = window.setTimeout(() => setLeaving(null), 780);
   };
+
+  const onTablistKey = (e: ReactKeyboardEvent<HTMLDivElement>) => {
+    if (e.key !== "ArrowRight" && e.key !== "ArrowLeft") return;
+    e.preventDefault();
+    const next = (sel + (e.key === "ArrowRight" ? 1 : -1) + FLAVORS.length) % FLAVORS.length;
+    choose(next);
+    document.getElementById(`flavor-tab-${next}`)?.focus();
+  };
+
+  const copyFor = (f: (typeof FLAVORS)[number]) => (
+    <>
+      <span className="pill inline-block bg-paper px-3 py-1 text-[10px] uppercase tracking-widest">Experiment No. 0{FLAVORS.indexOf(f) + 1}</span>
+      <h3 className="display mt-5 text-5xl md:text-6xl" style={{ lineHeight: 1 }}>{f.name}</h3>
+      <p className="mt-4 max-w-sm text-muted-foreground">{f.desc}</p>
+      <div className="mt-6 flex gap-6 text-sm">
+        <div><p className="text-[10px] uppercase tracking-widest text-muted-foreground">Size</p><p className="font-semibold">{f.size}</p></div>
+        <div><p className="text-[10px] uppercase tracking-widest text-muted-foreground">Energy</p><p className="font-semibold">{f.cal}</p></div>
+        <div><p className="text-[10px] uppercase tracking-widest text-muted-foreground">Sugar</p><p className="font-semibold">0 g</p></div>
+      </div>
+    </>
+  );
+
+  const notesFor = (f: (typeof FLAVORS)[number], entering: boolean) => (
+    <ul className="mt-4 space-y-3">
+      {f.notes.map((n, k) => (
+        <li
+          key={n}
+          className={`group flex cursor-default items-center gap-4 ${entering ? "fl-note-enter" : ""}`}
+          style={{ animationDelay: `${k * 80}ms` }}
+        >
+          <span className="fl-dot pill grid h-12 w-12 place-items-center text-xl transition-transform duration-300 group-hover:scale-110 group-hover:-rotate-6" style={{ background: k === 0 ? f.fruit : f.soft }}>{f.shapes[k]}</span>
+          <span className="text-xl font-semibold transition-transform duration-300 group-hover:translate-x-1">{n}</span>
+        </li>
+      ))}
+    </ul>
+  );
 
   return (
     <section id="flavor-lab" ref={ref} aria-busy="false" className="relative overflow-hidden py-28 transition-colors duration-700 motion-reduce:transition-none" style={{ background: p.bg }}>
