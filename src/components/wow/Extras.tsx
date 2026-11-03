@@ -150,6 +150,13 @@ export function FlavorLab() {
   }, []);
 
   useEffect(() => {
+    if (pendingFocus.current === null) return;
+    const idx = pendingFocus.current;
+    pendingFocus.current = null;
+    document.getElementById(`flavor-tab-${idx}`)?.focus();
+  }, [sel, transitionKey]);
+
+  useEffect(() => {
     if (reduced()) return;
     gsap.registerPlugin(ScrollTrigger);
     const ctx = gsap.context(() => {
@@ -178,8 +185,8 @@ export function FlavorLab() {
     if (e.key !== "ArrowRight" && e.key !== "ArrowLeft") return;
     e.preventDefault();
     const next = (sel + (e.key === "ArrowRight" ? 1 : -1) + FLAVORS.length) % FLAVORS.length;
+    pendingFocus.current = next;
     choose(next);
-    document.getElementById(`flavor-tab-${next}`)?.focus();
   };
 
   const copyFor = (f: (typeof FLAVORS)[number]) => (
