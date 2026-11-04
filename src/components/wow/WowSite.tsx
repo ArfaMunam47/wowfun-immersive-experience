@@ -59,46 +59,74 @@ export const Burst = ({ className = "" }: { className?: string }) => (
 /* ---------- Custom cursor ---------- */
 function WowCursor() {
   const dot = useRef<HTMLDivElement>(null);
-  const trail = useRef<HTMLDivElement>(null);
+  const ring = useRef<HTMLDivElement>(null);
   useEffect(() => {
     if (!window.matchMedia("(pointer: fine)").matches || window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
     const root = document.documentElement;
     root.classList.add("wow-cursor");
-    const qx = gsap.quickTo(dot.current, "x", { duration: 0.25, ease: "power3.out" });
-    const qy = gsap.quickTo(dot.current, "y", { duration: 0.25, ease: "power3.out" });
-    const tx = gsap.quickTo(trail.current, "x", { duration: 0.7, ease: "power3.out" });
-    const ty = gsap.quickTo(trail.current, "y", { duration: 0.7, ease: "power3.out" });
-    const setOpacity = (o: number) => gsap.to([dot.current, trail.current], { opacity: o, duration: 0.25, overwrite: "auto" });
+    let hidden = false;
+    let hovered = false;
+
+    // The dot tracks the pointer almost 1:1; the ring trails just behind for depth.
+    const dx = gsap.quickTo(dot.current, "x", { duration: 0.09, ease: "power2.out" });
+    const dy = gsap.quickTo(dot.current, "y", { duration: 0.09, ease: "power2.out" });
+    const rx = gsap.quickTo(ring.current, "x", { duration: 0.32, ease: "power3.out" });
+    const ry = gsap.quickTo(ring.current, "y", { duration: 0.32, ease: "power3.out" });
+    const setOpacity = (o: number) => gsap.to([dot.current, ring.current], { opacity: o, duration: 0.2, overwrite: "auto" });
+
     const move = (e: MouseEvent) => {
-      setOpacity(1);
-      qx(e.clientX); qy(e.clientY);
-      tx(e.clientX); ty(e.clientY);
+      if (hidden) { hidden = false; setOpacity(1); }
+      dx(e.clientX); dy(e.clientY);
+      rx(e.clientX); ry(e.clientY);
     };
+
     const hover = (e: MouseEvent) => {
       const el = e.target as Element | null;
-      const interactive = el?.closest?.('a, button, [role="tab"], input, textarea, article, [data-cursor="hover"]');
-      gsap.to(dot.current, { scale: interactive ? 1.9 : 1, rotate: interactive ? 45 : 0, duration: 0.35, ease: "power3.out", overwrite: "auto" });
-      gsap.to(trail.current, { scale: interactive ? 0.4 : 1, duration: 0.35, ease: "power3.out", overwrite: "auto" });
+      // Let the native text caret take over inside fields.
+      if (el?.closest?.("input, textarea, [contenteditable='true']")) {
+        hidden = true;
+        setOpacity(0);
+        return;
+      }
+      if (hidden) { hidden = false; setOpacity(1); }
+      hovered = !!el?.closest?.('a, button, [role="tab"], [data-cursor="hover"]');
+      gsap.to(dot.current, { scale: hovered ? 0.5 : 1, duration: 0.25, ease: "power3.out", overwrite: "auto" });
+      gsap.to(ring.current, { scale: hovered ? 1.4 : 1, duration: 0.3, ease: "power3.out", overwrite: "auto" });
+      ring.current?.classList.toggle("wow-ring-hot", hovered);
     };
-    const press = () => gsap.fromTo(dot.current, { scale: "+=0" }, { scale: "-=0.5", duration: 0.14, yoyo: true, repeat: 1, overwrite: "auto" });
+
+    const press = () => {
+      const rs = hovered ? 1.4 : 1;
+      const ds = hovered ? 0.5 : 1;
+      gsap.timeline({ overwrite: "auto" })
+        .to(dot.current, { scale: ds * 1.6, duration: 0.08, ease: "power2.out" })
+        .to(dot.current, { scale: ds, duration: 0.3, ease: "back.out(2.5)" })
+        .to(ring.current, { scale: rs * 0.82, duration: 0.1, ease: "power2.out" }, 0)
+        .to(ring.current, { scale: rs, duration: 0.32, ease: "back.out(2)" }, 0.1);
+    };
+
     window.addEventListener("mousemove", move, { passive: true });
     window.addEventListener("mouseover", hover, { passive: true });
     window.addEventListener("mousedown", press, { passive: true });
-    document.documentElement.addEventListener("mouseleave", () => setOpacity(0));
+    const onLeave = () => { hidden = true; setOpacity(0); };
+    document.documentElement.addEventListener("mouseleave", onLeave);
     return () => {
       root.classList.remove("wow-cursor");
       window.removeEventListener("mousemove", move);
       window.removeEventListener("mouseover", hover);
       window.removeEventListener("mousedown", press);
+      document.documentElement.removeEventListener("mouseleave", onLeave);
     };
   }, []);
   return (
     <div aria-hidden="true" className="pointer-events-none fixed inset-0 z-[100] hidden [@media(pointer:fine)]:block">
-      <div ref={trail} className="absolute left-0 top-0 opacity-0">
-        <Sparkle className="h-7 w-7 opacity-70 drop-shadow-[0_0_3px_var(--paper)]" />
+      <div ref={ring} className="absolute left-0 top-0 opacity-0 will-change-transform">
+        <div className="wow-ring -ml-[17px] -mt-[17px] h-[34px] w-[34px] rounded-full border-[1.5px] border-ink" />
       </div>
-      <div ref={dot} className="absolute left-0 top-0 opacity-0">
-        <Flower className="h-8 w-8 drop-shadow-[0_2px_6px_oklch(0_0_0/0.3)]" petal="var(--coral)" center="var(--sun)" />
+      <div ref={dot} className="absolute left-0 top-0 opacity-0 will-change-transform">
+        <div className="-ml-[5px] -mt-[5px] grid h-[10px] w-[10px] place-items-center rounded-full bg-ink">
+          <span className="h-[3px] w-[3px] rounded-full bg-sun" />
+        </div>
       </div>
     </div>
   );
