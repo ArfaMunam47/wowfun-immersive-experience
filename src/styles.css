@@ -95,6 +95,18 @@
 @media (pointer: fine) {
   html.wow-cursor,
   html.wow-cursor * { cursor: none !important; }
+  /* Text fields keep the native caret; the custom cursor fades out over them */
+  html.wow-cursor input,
+  html.wow-cursor textarea { cursor: text !important; }
+}
+
+/* WOW cursor ring: soft trail circle behind the precise dot */
+.wow-ring {
+  transition: border-color 0.2s ease, background-color 0.2s ease;
+}
+.wow-ring.wow-ring-hot {
+  border-color: var(--coral);
+  background-color: color-mix(in oklab, var(--coral) 14%, transparent);
 }
 
 @utility display {

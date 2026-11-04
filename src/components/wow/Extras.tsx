@@ -189,40 +189,50 @@ export function FlavorLab() {
     choose(next);
   };
 
-  const copyFor = (f: (typeof FLAVORS)[number]) => (
-    <>
-      <span className="pill inline-block bg-paper px-3 py-1 text-[10px] uppercase tracking-widest">Experiment No. 0{FLAVORS.indexOf(f) + 1}</span>
-      <h3 className="display mt-5 text-5xl md:text-6xl" style={{ lineHeight: 1 }}>{f.name}</h3>
-      <p className="mt-4 max-w-sm text-muted-foreground">{f.desc}</p>
-      <div className="mt-6 flex gap-6 text-sm">
-        <div><p className="text-[10px] uppercase tracking-widest text-muted-foreground">Size</p><p className="font-semibold">{f.size}</p></div>
-        <div><p className="text-[10px] uppercase tracking-widest text-muted-foreground">Energy</p><p className="font-semibold">{f.cal}</p></div>
-        <div><p className="text-[10px] uppercase tracking-widest text-muted-foreground">Sugar</p><p className="font-semibold">0 g</p></div>
-      </div>
-    </>
-  );
+  const copyFor = (f: (typeof FLAVORS)[number], entering: boolean) => {
+    const base = leaving !== null ? 140 : 0;
+    const cls = entering ? "fl-item" : "";
+    const st = (ms: number) => (entering ? { animationDelay: `${base + ms}ms` } : undefined);
+    return (
+      <>
+        <span className={`pill inline-block bg-paper px-3 py-1 text-[10px] uppercase tracking-widest ${cls}`} style={st(0)}>Experiment No. 0{FLAVORS.indexOf(f) + 1}</span>
+        <h3 className={`display mt-5 text-5xl md:text-6xl ${cls}`} style={{ lineHeight: 1, ...st(70) }}>{f.name}</h3>
+        <p className={`mt-4 max-w-sm text-muted-foreground ${cls}`} style={st(140)}>{f.desc}</p>
+        <div className={`mt-6 flex gap-6 text-sm ${cls}`} style={st(210)}>
+          <div><p className="text-[10px] uppercase tracking-widest text-muted-foreground">Size</p><p className="font-semibold">{f.size}</p></div>
+          <div><p className="text-[10px] uppercase tracking-widest text-muted-foreground">Energy</p><p className="font-semibold">{f.cal}</p></div>
+          <div><p className="text-[10px] uppercase tracking-widest text-muted-foreground">Sugar</p><p className="font-semibold">0 g</p></div>
+        </div>
+      </>
+    );
+  };
 
-  const notesFor = (f: (typeof FLAVORS)[number], entering: boolean) => (
-    <ul className="mt-4 space-y-3">
-      {f.notes.map((n, k) => (
-        <li
-          key={n}
-          className={`group flex cursor-default items-center gap-4 ${entering ? "fl-note-enter" : ""}`}
-          style={{ animationDelay: `${k * 80}ms` }}
-        >
-          <span className="fl-dot pill grid h-12 w-12 place-items-center text-xl transition-transform duration-300 group-hover:scale-110 group-hover:-rotate-6" style={{ background: k === 0 ? f.fruit : f.soft }}>{f.shapes[k]}</span>
-          <span className="text-xl font-semibold transition-transform duration-300 group-hover:translate-x-1">{n}</span>
-        </li>
-      ))}
-    </ul>
-  );
+  const notesFor = (f: (typeof FLAVORS)[number], entering: boolean) => {
+    const base = leaving !== null ? 180 : 0;
+    return (
+      <ul className="mt-4 space-y-3">
+        {f.notes.map((n, k) => (
+          <li
+            key={n}
+            className={`group flex cursor-default items-center gap-4 ${entering ? "fl-note-enter" : ""}`}
+            style={entering ? { animationDelay: `${base + k * 80}ms` } : undefined}
+          >
+            <span className="fl-dot pill grid h-12 w-12 place-items-center text-xl transition-transform duration-300 group-hover:scale-110 group-hover:-rotate-6" style={{ background: k === 0 ? f.fruit : f.soft }}>{f.shapes[k]}</span>
+            <span className="text-xl font-semibold transition-transform duration-300 group-hover:translate-x-1">{n}</span>
+          </li>
+        ))}
+      </ul>
+    );
+  };
 
   return (
     <section id="flavor-lab" ref={ref} aria-busy="false" className="relative overflow-hidden py-28 transition-colors duration-700 motion-reduce:transition-none" style={{ background: p.bg }}>
-      <style>{`@keyframes flStar{0%,100%{transform:translateY(0) rotate(0)}50%{transform:translateY(-10px) rotate(18deg)}}@keyframes flFloat{0%,100%{transform:translateY(0)}50%{transform:translateY(-10px)}}@keyframes flCanInNext{from{opacity:0;transform:translate3d(42px,14px,0) scale(.84);filter:blur(7px)}to{opacity:1;transform:translate3d(0,0,0) scale(1);filter:blur(0)}}@keyframes flCanInPrev{from{opacity:0;transform:translate3d(-42px,14px,0) scale(.84);filter:blur(7px)}to{opacity:1;transform:translate3d(0,0,0) scale(1);filter:blur(0)}}@keyframes flCanOutNext{from{opacity:1;transform:translate3d(0,0,0) scale(1);filter:blur(0)}to{opacity:0;transform:translate3d(-38px,10px,0) scale(.84);filter:blur(7px)}}@keyframes flCanOutPrev{from{opacity:1;transform:translate3d(0,0,0) scale(1);filter:blur(0)}to{opacity:0;transform:translate3d(38px,10px,0) scale(.84);filter:blur(7px)}}@keyframes flCopyIn{from{opacity:0;transform:translate3d(0,16px,0)}to{opacity:1;transform:translate3d(0,0,0)}}@keyframes flCopyOut{from{opacity:1;transform:translate3d(0,0,0)}to{opacity:0;transform:translate3d(0,-12px,0)}}@keyframes flNoteIn{from{opacity:0;transform:translate3d(20px,0,0) scale(.96)}to{opacity:1;transform:translate3d(0,0,0) scale(1)}}@keyframes flNotesOutNext{from{opacity:1;transform:translate3d(0,0,0)}to{opacity:0;transform:translate3d(-16px,0,0)}}@keyframes flNotesOutPrev{from{opacity:1;transform:translate3d(0,0,0)}to{opacity:0;transform:translate3d(16px,0,0)}}@keyframes flTabPop{0%{transform:scale(.94)}55%{transform:scale(1.045)}100%{transform:scale(1)}}.fl-can-enter-next{animation:flCanInNext .62s cubic-bezier(.45,0,.2,1) both}.fl-can-enter-prev{animation:flCanInPrev .62s cubic-bezier(.45,0,.2,1) both}.fl-can-exit-next{animation:flCanOutNext .42s cubic-bezier(.4,0,.7,.2) both}.fl-can-exit-prev{animation:flCanOutPrev .42s cubic-bezier(.4,0,.7,.2) both}.fl-copy-enter{animation:flCopyIn .5s cubic-bezier(.45,0,.2,1) both}.fl-copy-enter-delay{animation-delay:.16s}.fl-copy-out-next,.fl-copy-out-prev{animation:flCopyOut .3s cubic-bezier(.4,0,.7,.2) both}.fl-note-enter{animation:flNoteIn .42s cubic-bezier(.45,0,.2,1) both}.fl-notes-out-next{animation:flNotesOutNext .3s cubic-bezier(.4,0,.7,.2) both}.fl-notes-out-prev{animation:flNotesOutPrev .3s cubic-bezier(.4,0,.7,.2) both}.fl-tab-pop{animation:flTabPop .38s cubic-bezier(.45,0,.2,1)}@media(prefers-reduced-motion:reduce){.fl-can-enter-next,.fl-can-enter-prev,.fl-can-exit-next,.fl-can-exit-prev,.fl-copy-enter,.fl-copy-out-next,.fl-copy-out-prev,.fl-note-enter,.fl-notes-out-next,.fl-notes-out-prev,.fl-tab-pop{animation-duration:.01s}.fl-copy-enter-delay{animation-delay:0s}}`}</style>
+      <style>{`@keyframes flStar{0%,100%{transform:translateY(0) rotate(0)}50%{transform:translateY(-10px) rotate(18deg)}}@keyframes flFloat{0%,100%{transform:translateY(0)}50%{transform:translateY(-10px)}}@keyframes flCanInNext{from{opacity:0;transform:translate3d(42px,14px,0) scale(.84);filter:blur(7px)}to{opacity:1;transform:translate3d(0,0,0) scale(1);filter:blur(0)}}@keyframes flCanInPrev{from{opacity:0;transform:translate3d(-42px,14px,0) scale(.84);filter:blur(7px)}to{opacity:1;transform:translate3d(0,0,0) scale(1);filter:blur(0)}}@keyframes flCanOutNext{from{opacity:1;transform:translate3d(0,0,0) scale(1);filter:blur(0)}to{opacity:0;transform:translate3d(-38px,10px,0) scale(.84);filter:blur(7px)}}@keyframes flCanOutPrev{from{opacity:1;transform:translate3d(0,0,0) scale(1);filter:blur(0)}to{opacity:0;transform:translate3d(38px,10px,0) scale(.84);filter:blur(7px)}}@keyframes flCopyIn{from{opacity:0;transform:translate3d(0,16px,0)}to{opacity:1;transform:translate3d(0,0,0)}}@keyframes flCopyOut{from{opacity:1;transform:translate3d(0,0,0)}to{opacity:0;transform:translate3d(0,-12px,0)}}@keyframes flNoteIn{from{opacity:0;transform:translate3d(20px,0,0) scale(.96)}to{opacity:1;transform:translate3d(0,0,0) scale(1)}}@keyframes flNotesOutNext{from{opacity:1;transform:translate3d(0,0,0)}to{opacity:0;transform:translate3d(-16px,0,0)}}@keyframes flNotesOutPrev{from{opacity:1;transform:translate3d(0,0,0)}to{opacity:0;transform:translate3d(16px,0,0)}}@keyframes flTabPop{0%{transform:scale(.94)}55%{transform:scale(1.045)}100%{transform:scale(1)}}.fl-can-enter-next{animation:flCanInNext .62s cubic-bezier(.45,0,.2,1) both}.fl-can-enter-prev{animation:flCanInPrev .62s cubic-bezier(.45,0,.2,1) both}.fl-can-exit-next{animation:flCanOutNext .42s cubic-bezier(.4,0,.7,.2) both}.fl-can-exit-prev{animation:flCanOutPrev .42s cubic-bezier(.4,0,.7,.2) both}.fl-copy-enter{animation:flCopyIn .5s cubic-bezier(.45,0,.2,1) both}.fl-item{animation:flCopyIn .5s cubic-bezier(.45,0,.2,1) both}.fl-can-delay{animation-delay:.12s}.fl-copy-out-next,.fl-copy-out-prev{animation:flCopyOut .3s cubic-bezier(.4,0,.7,.2) both}.fl-note-enter{animation:flNoteIn .42s cubic-bezier(.45,0,.2,1) both}.fl-notes-out-next{animation:flNotesOutNext .3s cubic-bezier(.4,0,.7,.2) both}.fl-notes-out-prev{animation:flNotesOutPrev .3s cubic-bezier(.4,0,.7,.2) both}.fl-tab-pop{animation:flTabPop .38s cubic-bezier(.45,0,.2,1)}@media(prefers-reduced-motion:reduce){.fl-can-enter-next,.fl-can-enter-prev,.fl-can-exit-next,.fl-can-exit-prev,.fl-copy-enter,.fl-item,.fl-copy-out-next,.fl-copy-out-prev,.fl-note-enter,.fl-notes-out-next,.fl-notes-out-prev,.fl-tab-pop{animation-duration:.01s}.fl-item,.fl-note-enter,.fl-can-delay{animation-delay:0s !important}}`}</style>
       <div className="fl-par pointer-events-none absolute -left-20 top-24 h-72 w-72 rounded-full opacity-60 transition-colors duration-700" data-speed="0.6" style={{ background: p.fruit }} />
       <div className="fl-par pointer-events-none absolute -right-10 bottom-10 h-48 w-48 rounded-full opacity-50 transition-colors duration-700" data-speed="1.4" style={{ background: p.soft }} />
       <Sparkle className="fl-par absolute right-[12%] top-16 h-12 w-12" />
+      <span aria-hidden="true" className="fl-par absolute bottom-32 left-[14%] hidden h-12 w-12 place-items-center rounded-full text-lg transition-colors duration-700 md:grid" data-speed="1.1" style={{ background: p.soft }}>{p.shapes[1]}</span>
+      <span aria-hidden="true" className="fl-par absolute bottom-40 right-[8%] hidden h-9 w-9 place-items-center rounded-full text-sm transition-colors duration-700 md:grid" data-speed="0.8" style={{ background: p.fruit }}>{p.shapes[0]}</span>
       <div className="relative mx-auto max-w-6xl px-6">
         <div className="flex flex-wrap items-end justify-between gap-6">
           <h2 className="display text-[15vw] md:text-[9rem]" aria-label="The Flavor Lab">
@@ -237,17 +247,20 @@ export function FlavorLab() {
           <div className="relative order-2 min-h-[16rem] md:order-1">
             {lp && (
               <div key={`copy-out-${transitionKey}`} aria-hidden="true" className={`pointer-events-none absolute inset-0 fl-copy-out-${transitionDir}`}>
-                {copyFor(lp)}
+                {copyFor(lp, false)}
               </div>
             )}
-            <div key={`details-${transitionKey}`} className={`relative fl-copy-enter ${lp ? "fl-copy-enter-delay" : ""}`}>
-              {copyFor(lab)}
+            <div key={`details-${transitionKey}`} className="relative">
+              {copyFor(lab, true)}
             </div>
           </div>
 
           <div className="fl-can relative order-1 mx-auto md:order-2">
+            <div aria-hidden="true" className="pointer-events-none absolute inset-0 z-0 flex items-center justify-center">
+              <div className="h-[46vh] w-64 rounded-full opacity-30 blur-3xl transition-colors duration-700" style={{ background: p.fruit }} />
+            </div>
             <div className="fl-shadow absolute inset-x-0 bottom-2 mx-auto h-10 w-40 rounded-full bg-ink/20 blur-xl" />
-            <div key={`can-${transitionKey}`} className={`relative fl-can-enter-${transitionDir}`}>
+            <div key={`can-${transitionKey}`} className={`relative fl-can-enter-${transitionDir} ${lp ? "fl-can-delay" : ""}`}>
               <div className="fl-anim" style={{ animation: "flFloat 5s ease-in-out infinite" }}>
                 <img src={lab.img} alt={lab.name} width={576} height={1152} className="fl-img relative h-[52vh] w-auto object-contain drop-shadow-[var(--shadow-can)]" />
               </div>
@@ -261,8 +274,7 @@ export function FlavorLab() {
                   <div className="fl-anim" style={{ animation: "flFloat 5s ease-in-out infinite" }}>
                     <img src={lp.img} alt="" aria-hidden="true" width={576} height={1152} className="fl-img h-[52vh] w-auto object-contain drop-shadow-[var(--shadow-can)]" />
                   </div>
-                </div>
-              </div>
+                </div>              </div>
             )}
           </div>
 
@@ -290,7 +302,7 @@ export function FlavorLab() {
               onClick={() => choose(k)}
               className={`fl-ctrl pill group flex cursor-pointer items-center gap-3 py-2 pl-2 pr-5 text-sm font-semibold transition-all duration-300 hover:-translate-y-1 active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ink focus-visible:ring-offset-2 ${k === sel ? "fl-tab-pop bg-ink text-paper" : "bg-paper"}`}
             >
-              <span className="grid h-9 w-9 place-items-center overflow-hidden rounded-full ring-0 ring-ink transition-all duration-300 group-hover:scale-110 group-hover:ring-2" style={{ background: pr.fruit }}>
+              <span className="grid h-9 w-9 place-items-center overflow-hidden rounded-full ring-0 ring-ink transition-all duration-300 group-hover:scale-110 group-hover:ring-2" style={{ background: pr.fruit, boxShadow: k === sel ? `0 0 0 2.5px ${pr.fruit}` : undefined }}>
                 <img src={pr.img} alt="" className="h-12 w-auto transition-transform duration-300 group-hover:rotate-12" />
               </span>
               <span className="transition-transform duration-300 group-hover:translate-x-0.5">{pr.name}</span>
