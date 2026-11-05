@@ -60,6 +60,7 @@ export const Burst = ({ className = "" }: { className?: string }) => (
 function WowCursor() {
   const dot = useRef<HTMLDivElement>(null);
   const ring = useRef<HTMLDivElement>(null);
+  const ringEl = useRef<HTMLDivElement>(null);
   useEffect(() => {
     if (!window.matchMedia("(pointer: fine)").matches || window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
     const root = document.documentElement;
@@ -92,7 +93,7 @@ function WowCursor() {
       hovered = !!el?.closest?.('a, button, [role="tab"], [data-cursor="hover"]');
       gsap.to(dot.current, { scale: hovered ? 0.5 : 1, duration: 0.25, ease: "power3.out", overwrite: "auto" });
       gsap.to(ring.current, { scale: hovered ? 1.4 : 1, duration: 0.3, ease: "power3.out", overwrite: "auto" });
-      ring.current?.classList.toggle("wow-ring-hot", hovered);
+      ringEl.current?.classList.toggle("wow-ring-hot", hovered);
     };
 
     const press = () => {
@@ -121,7 +122,7 @@ function WowCursor() {
   return (
     <div aria-hidden="true" className="pointer-events-none fixed inset-0 z-[100] hidden [@media(pointer:fine)]:block">
       <div ref={ring} className="absolute left-0 top-0 opacity-0 will-change-transform">
-        <div className="wow-ring -ml-[17px] -mt-[17px] h-[34px] w-[34px] rounded-full border-[1.5px] border-ink" />
+        <div ref={ringEl} className="wow-ring -ml-[17px] -mt-[17px] h-[34px] w-[34px] rounded-full border-[1.5px] border-ink" />
       </div>
       <div ref={dot} className="absolute left-0 top-0 opacity-0 will-change-transform">
         <div className="-ml-[5px] -mt-[5px] grid h-[10px] w-[10px] place-items-center rounded-full bg-ink">
