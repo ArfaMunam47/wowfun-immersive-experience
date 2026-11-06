@@ -75,8 +75,14 @@ function WowCursor() {
     const ry = gsap.quickTo(ring.current, "y", { duration: 0.32, ease: "power3.out" });
     const setOpacity = (o: number) => gsap.to([dot.current, ring.current], { opacity: o, duration: 0.2, overwrite: "auto" });
 
+    const isField = (el: Element | null) => !!el?.closest?.("input, textarea, [contenteditable='true']");
     const move = (e: MouseEvent) => {
-      if (hidden) { hidden = false; setOpacity(1); }
+      // The element under the pointer decides visibility: fields get the native caret.
+      const field = isField(e.target as Element | null);
+      if (field !== hidden) {
+        hidden = field;
+        setOpacity(field ? 0 : 1);
+      }
       dx(e.clientX); dy(e.clientY);
       rx(e.clientX); ry(e.clientY);
     };
@@ -84,9 +90,8 @@ function WowCursor() {
     const hover = (e: MouseEvent) => {
       const el = e.target as Element | null;
       // Let the native text caret take over inside fields.
-      if (el?.closest?.("input, textarea, [contenteditable='true']")) {
-        hidden = true;
-        setOpacity(0);
+      if (isField(el)) {
+        if (!hidden) { hidden = true; setOpacity(0); }
         return;
       }
       if (hidden) { hidden = false; setOpacity(1); }
