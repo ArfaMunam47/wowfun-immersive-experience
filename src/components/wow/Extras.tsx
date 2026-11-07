@@ -161,8 +161,7 @@ export function FlavorLab() {
     gsap.registerPlugin(ScrollTrigger);
     const ctx = gsap.context(() => {
       const t = gsap.timeline({ scrollTrigger: { trigger: ref.current, start: "top 65%" } });
-      t.from(".fl-word", { yPercent: 110, rotate: 4, duration: 1, stagger: 0.08, ease: "power4.out" })
-        .from(".fl-ctrl", { y: 24, opacity: 0, duration: 0.6, stagger: 0.08, ease: "power3.out" }, "-=0.8");
+      t.from(".fl-word", { yPercent: 110, rotate: 4, duration: 1, stagger: 0.08, ease: "power4.out" });
       gsap.utils.toArray<HTMLElement>(".fl-par").forEach((el) => {
         const speed = Number(el.dataset["speed"] || 1);
         gsap.to(el, { yPercent: -40 * speed, ease: "none", scrollTrigger: { trigger: ref.current, start: "top bottom", end: "bottom top", scrub: true } });
