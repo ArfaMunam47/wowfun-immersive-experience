@@ -35,14 +35,14 @@ A smooth accordion experience with accessible controls.
 
 ## 🛠️ Tech Stack
 
-| Technology | Purpose |
-|---|---|
-| React | Component based frontend development |
-| TypeScript | Type safe application logic |
-| Tailwind CSS | Responsive styling |
-| GSAP | Advanced animations and motion |
-| ScrollTrigger | Scroll based interactions |
-| Lucide React | Interface icons |
+| Technology    | Purpose                              |
+| ------------- | ------------------------------------ |
+| React         | Component based frontend development |
+| TypeScript    | Type safe application logic          |
+| Tailwind CSS  | Responsive styling                   |
+| GSAP          | Advanced animations and motion       |
+| ScrollTrigger | Scroll based interactions            |
+| Lucide React  | Interface icons                      |
 
 ## 🎯 Project Vision
 
@@ -84,14 +84,13 @@ Open the local URL displayed in your terminal.
 
 ## 💡 What I Explored
 
-* Creative visual composition and editorial web design
-* Interactive product presentation
-* Advanced animation techniques
-* Smooth scrolling experiences
-* Responsive interface development
-* Component architecture with React
-* Motion driven storytelling
-* UI interaction design
-
+- Creative visual composition and editorial web design
+- Interactive product presentation
+- Advanced animation techniques
+- Smooth scrolling experiences
+- Responsive interface development
+- Component architecture with React
+- Motion driven storytelling
+- UI interaction design
 
 ### Made with creativity, curiosity, and a little WOW! 🥤

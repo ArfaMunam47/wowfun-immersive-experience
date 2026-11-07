@@ -81,8 +81,12 @@
 }
 
 @layer base {
-  * { border-color: var(--color-border); }
-  html { scroll-behavior: smooth; }
+  * {
+    border-color: var(--color-border);
+  }
+  html {
+    scroll-behavior: smooth;
+  }
   body {
     background-color: var(--color-background);
     color: var(--color-foreground);
@@ -94,15 +98,21 @@
 /* Custom cursor: hide the native pointer only while the WOW cursor is active (fine pointers, motion allowed) */
 @media (pointer: fine) {
   html.wow-cursor,
-  html.wow-cursor * { cursor: none !important; }
+  html.wow-cursor * {
+    cursor: none !important;
+  }
   /* Text fields keep the native caret; the custom cursor fades out over them */
   html.wow-cursor input,
-  html.wow-cursor textarea { cursor: text !important; }
+  html.wow-cursor textarea {
+    cursor: text !important;
+  }
 }
 
 /* WOW cursor ring: soft trail circle behind the precise dot */
 .wow-ring {
-  transition: border-color 0.2s ease, background-color 0.2s ease;
+  transition:
+    border-color 0.2s ease,
+    background-color 0.2s ease;
 }
 .wow-ring.wow-ring-hot {
   border-color: var(--coral);
@@ -132,15 +142,27 @@
 }
 
 @keyframes floaty {
-  0%, 100% { transform: translateY(0) rotate(-4deg); }
-  50% { transform: translateY(-16px) rotate(3deg); }
+  0%,
+  100% {
+    transform: translateY(0) rotate(-4deg);
+  }
+  50% {
+    transform: translateY(-16px) rotate(3deg);
+  }
 }
 @keyframes wobble {
-  0%, 100% { transform: rotate(-8deg) scale(1); }
-  50% { transform: rotate(8deg) scale(1.08); }
+  0%,
+  100% {
+    transform: rotate(-8deg) scale(1);
+  }
+  50% {
+    transform: rotate(8deg) scale(1.08);
+  }
 }
 @keyframes marquee {
-  to { transform: translateX(-50%); }
+  to {
+    transform: translateX(-50%);
+  }
 }
 @utility marquee {
   animation: marquee 22s linear infinite;
